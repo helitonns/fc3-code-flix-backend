@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.fullcycle.admin.catalogo.application'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(":domain"))
+    implementation 'io.vavr:vavr:0.10.4'
+
+    implementation 'com.github.javafaker:javafaker:1.0.2'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.5.1'
+
+}
+
+test {
+    useJUnitPlatform()
+}
