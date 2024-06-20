@@ -1,5 +1,6 @@
 package com.fullcycle.admin.catalogo.infrastructure.api;
 
+import java.util.List;
 import java.util.Objects;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import com.fullcycle.admin.catalogo.application.castmember.create.CreateCastMemb
 import com.fullcycle.admin.catalogo.application.castmember.delete.DeleteCastMemberUseCase;
 import com.fullcycle.admin.catalogo.application.castmember.retrieve.get.CastMemberOutput;
 import com.fullcycle.admin.catalogo.application.castmember.retrieve.get.GetCastMemberByIdUseCase;
+import com.fullcycle.admin.catalogo.application.castmember.retrieve.list.CastMemberListOutput;
 import com.fullcycle.admin.catalogo.application.castmember.retrieve.list.ListCastMembersUseCase;
 import com.fullcycle.admin.catalogo.application.castmember.update.UpdateCastMemberOutput;
 import com.fullcycle.admin.catalogo.application.castmember.update.UpdateCastMemberUseCase;
@@ -28,6 +30,7 @@ import com.fullcycle.admin.catalogo.domain.entity.castmember.CastMember;
 import com.fullcycle.admin.catalogo.domain.entity.castmember.CastMemberID;
 import com.fullcycle.admin.catalogo.domain.exceptions.NotFoundException;
 import com.fullcycle.admin.catalogo.domain.exceptions.NotificationException;
+import com.fullcycle.admin.catalogo.domain.pagination.Pagination;
 import com.fullcycle.admin.catalogo.domain.validation.Error;
 import com.fullcycle.admin.catalogo.infrastructure.entity.castmember.models.CreateCastMemberRequest;
 import com.fullcycle.admin.catalogo.infrastructure.entity.castmember.models.UpdateCastMemberRequest;
@@ -293,4 +296,100 @@ public class CastMemberAPITest {
         Mockito.verify(deleteCastMemberUseCase).execute(Mockito.eq(expectedId));
     }
 
+    @Test
+    public void givenAValidParams_whenCallsListCastMembers_shouldReturnIt() throws Exception{
+        //given
+        final var member = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+
+        final var expectedPage = 1;
+        final var expectedPerPage = 20;
+        final var expectedTerms = "";
+        final var expectedSort = "type";
+        final var expectedDirection = "desc";
+
+        final var expectedItemsCount = 1;
+        final var expectedTotal = 1;
+
+        final var expectedItems = List.of(CastMemberListOutput.from(member));
+
+        Mockito.when(listCastMembersUseCase.execute(Mockito.any()))
+            .thenReturn(new Pagination<>(expectedPage, expectedPerPage, expectedTotal, expectedItems));
+
+        //when
+        final var request = MockMvcRequestBuilders.get("/cast_members")
+            .queryParam("page", String.valueOf(expectedPage))
+            .queryParam("perPage", String.valueOf(expectedPerPage))
+            .queryParam("search", expectedTerms)
+            .queryParam("sort", expectedSort)
+            .queryParam("dir", expectedDirection)
+            .accept(MediaType.APPLICATION_JSON);
+
+        final var response = mvc.perform(request);
+
+        //then
+        response
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.current_page", Matchers.equalTo(expectedPage)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.per_page", Matchers.equalTo(expectedPerPage)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.total", Matchers.equalTo(expectedTotal)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items", Matchers.hasSize(expectedItemsCount)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items[0].id", Matchers.equalTo(member.getId().getValue())))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items[0].name", Matchers.equalTo(member.getName())))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items[0].type", Matchers.equalTo(member.getType().name())))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items[0].created_at", Matchers.equalTo(member.getCreatedAt().toString())));
+        
+            Mockito.verify(listCastMembersUseCase).execute(Mockito.argThat(query -> 
+                Objects.equals(expectedPage, query.page())
+                && Objects.equals(expectedPerPage, query.perPage())
+                && Objects.equals(expectedTerms, query.terms())
+                && Objects.equals(expectedSort, query.sort())
+                && Objects.equals(expectedDirection, query.direction())
+            ));
+    }
+    
+    @Test
+    public void givenEmptyParams_whenCallsListCastMembers_shouldUseDefaultsAndReturnIt() throws Exception{
+        //given
+        final var member = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "";
+        final var expectedSort = "name";
+        final var expectedDirection = "asc";
+
+        final var expectedItemsCount = 1;
+        final var expectedTotal = 1;
+
+        final var expectedItems = List.of(CastMemberListOutput.from(member));
+
+        Mockito.when(listCastMembersUseCase.execute(Mockito.any()))
+            .thenReturn(new Pagination<>(expectedPage, expectedPerPage, expectedTotal, expectedItems));
+
+        //when
+        final var request = MockMvcRequestBuilders.get("/cast_members")
+            .accept(MediaType.APPLICATION_JSON);
+
+        final var response = mvc.perform(request);
+
+        //then
+        response
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.current_page", Matchers.equalTo(expectedPage)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.per_page", Matchers.equalTo(expectedPerPage)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.total", Matchers.equalTo(expectedTotal)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items", Matchers.hasSize(expectedItemsCount)))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items[0].id", Matchers.equalTo(member.getId().getValue())))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items[0].name", Matchers.equalTo(member.getName())))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items[0].type", Matchers.equalTo(member.getType().name())))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.items[0].created_at", Matchers.equalTo(member.getCreatedAt().toString())));
+        
+            Mockito.verify(listCastMembersUseCase).execute(Mockito.argThat(query -> 
+                Objects.equals(expectedPage, query.page())
+                && Objects.equals(expectedPerPage, query.perPage())
+                && Objects.equals(expectedTerms, query.terms())
+                && Objects.equals(expectedSort, query.sort())
+                && Objects.equals(expectedDirection, query.direction())
+            ));
+    }
 }
