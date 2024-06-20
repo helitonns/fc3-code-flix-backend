@@ -1,13 +1,16 @@
 package com.fullcycle.admin.catalogo.infrastructure.api;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import com.fullcycle.admin.catalogo.infrastructure.entity.castmember.models.CastMemberResponse;
 import com.fullcycle.admin.catalogo.infrastructure.entity.castmember.models.CreateCastMemberRequest;
 import com.fullcycle.admin.catalogo.infrastructure.entity.castmember.models.UpdateCastMemberRequest;
@@ -56,5 +59,15 @@ public interface CastMemberAPI {
         @ApiResponse(responseCode = "500", description = "An internal server error was throw")
     })
     ResponseEntity<?> updateById(@PathVariable String id, @RequestBody UpdateCastMemberRequest body);
+    //__________________________________________________________________________
+
+    @DeleteMapping(value = "{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete a cast member by it's identifier")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Cast Member deleted"),
+        @ApiResponse(responseCode = "500", description = "An internal server error was throw")
+    })
+    void deleteById(@PathVariable String id);
     //__________________________________________________________________________
 }

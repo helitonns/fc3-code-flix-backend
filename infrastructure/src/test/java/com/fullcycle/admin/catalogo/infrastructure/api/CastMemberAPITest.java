@@ -274,5 +274,23 @@ public class CastMemberAPITest {
             && Objects.equals(expectedType, cmd.type())));
     }
 
+    @Test
+    public void givenAValidId_whenCallsDeleteById_shouldDeletedIt() throws Exception{
+        //given
+        final var expectedId = "123";
+
+        Mockito.doNothing().when(deleteCastMemberUseCase).execute(Mockito.any());
+        
+        //when
+        final var request = MockMvcRequestBuilders.delete("/cast_members/{id}", expectedId)
+            .accept(MediaType.APPLICATION_JSON);
+
+        final var response = mvc.perform(request);
+
+        //then
+        response.andExpect(MockMvcResultMatchers.status().isNoContent());
+
+        Mockito.verify(deleteCastMemberUseCase).execute(Mockito.eq(expectedId));
+    }
 
 }
