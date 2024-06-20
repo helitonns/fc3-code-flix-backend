@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import com.fullcycle.admin.catalogo.domain.pagination.Pagination;
+import com.fullcycle.admin.catalogo.infrastructure.entity.castmember.models.CastMemberListResponse;
 import com.fullcycle.admin.catalogo.infrastructure.entity.castmember.models.CastMemberResponse;
 import com.fullcycle.admin.catalogo.infrastructure.entity.castmember.models.CreateCastMemberRequest;
 import com.fullcycle.admin.catalogo.infrastructure.entity.castmember.models.UpdateCastMemberRequest;
@@ -34,6 +37,21 @@ public interface CastMemberAPI {
         @ApiResponse(responseCode = "500", description = "An internal server error was throw")
     })
     ResponseEntity<?> create(@RequestBody CreateCastMemberRequest input);
+    //__________________________________________________________________________
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "List all cast members")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cast Member retrieved"),
+        @ApiResponse(responseCode = "500", description = "An internal server error was throw")
+    })
+    Pagination<CastMemberListResponse> list(
+        @RequestParam(name = "search", required = false, defaultValue = "") final String search,
+        @RequestParam(name = "page", required = false, defaultValue = "0") final int page,
+        @RequestParam(name = "perPage", required = false, defaultValue = "10") final int perPage,
+        @RequestParam(name = "sort", required = false, defaultValue = "name") final String sort,
+        @RequestParam(name = "dir", required = false, defaultValue = "asc") final String direction
+    );
     //__________________________________________________________________________
 
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
