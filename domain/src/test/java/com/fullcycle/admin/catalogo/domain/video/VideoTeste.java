@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import com.fullcycle.admin.catalogo.domain.entity.castmember.CastMemberID;
 import com.fullcycle.admin.catalogo.domain.entity.category.CategoryID;
 import com.fullcycle.admin.catalogo.domain.entity.genre.GenreID;
+import com.fullcycle.admin.catalogo.domain.entity.video.Rating;
+import com.fullcycle.admin.catalogo.domain.entity.video.Video;
 import com.fullcycle.admin.catalogo.domain.validation.handler.ThrowsValidationHandler;
 
 public class VideoTeste {
@@ -35,9 +37,9 @@ public class VideoTeste {
             expectedDescription,
             expectedLaunchedAt,
             expectedDuration,
+            expectedRating,
             expectedOpened,
             expectedPublished,
-            expectedRating,
             expectedCategories,
             expectedGenres,
             expectedMembers
