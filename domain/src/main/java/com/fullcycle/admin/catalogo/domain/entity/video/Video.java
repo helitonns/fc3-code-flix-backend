@@ -206,76 +206,70 @@ public class Video extends AggregateRoot<VideoID> {
         return castMembers != null ? Collections.unmodifiableSet(castMembers) : Collections.emptySet();
     }
 
-
-    public void setTitle(final String title) {
-        this.title = title;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    public void setLaunchedAt(final Year launchedAt) {
-        this.launchedAt = launchedAt;
-    }
-
-    public void setDuration(final double duration) {
-        this.duration = duration;
-    }
-
-    public void setRating(final Rating rating) {
-        this.rating = rating;
-    }
-
-    public void setOpened(final boolean opened) {
-        this.opened = opened;
-    }
-
-    public void setPublished(final boolean published) {
-        this.published = published;
-    }
-
-    public void setCreatedAt(final Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(final Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public void setBanner(final ImageMedia banner) {
         this.banner = banner;
+        this.updatedAt = InstantUtils.now();
     }
 
     public void setThumbnail(final ImageMedia thumbnail) {
         this.thumbnail = thumbnail;
+        this.updatedAt = InstantUtils.now();
     }
 
     public void setThumbnailHalf(final ImageMedia thumbnailHalf) {
         this.thumbnailHalf = thumbnailHalf;
+        this.updatedAt = InstantUtils.now();
     }
 
     public void setTrailer(final AudioVideoMedia trailer) {
         this.trailer = trailer;
+        this.updatedAt = InstantUtils.now();
     }
 
     public void setVideo(final AudioVideoMedia video) {
         this.video = video;
+        this.updatedAt = InstantUtils.now();
     }
 
-    public void setCategories(final Set<CategoryID> categories) {
+    private void setCategories(final Set<CategoryID> categories) {
         this.categories = categories != null ? new HashSet<>(categories) : Collections.emptySet();
     }
 
-    public void setGenres(final Set<GenreID> genres) {
+    private void setGenres(final Set<GenreID> genres) {
         this.genres = genres != null ? new HashSet<>(genres) : Collections.emptySet();
     }
 
-    public void setCastMembers(final Set<CastMemberID> castMembers) {
+    private void setCastMembers(final Set<CastMemberID> castMembers) {
         this.castMembers = castMembers != null ? new HashSet<>(castMembers) : Collections.emptySet();
     }
 
     @Override
     public void validate(final ValidationHandler handler) {
+    }
+
+    public void update(
+        final String title,
+        final String description,
+        final Year launchedAt,
+        final double duration,
+        final Rating rating,
+        final boolean opened,
+        final boolean published,
+        final Set<CategoryID> categories,
+        final Set<GenreID> genres,
+        final Set<CastMemberID> castMembers
+    ) {
+        this.title = title;
+        this.description = description;
+        this.launchedAt = launchedAt;
+        this.duration = duration;
+        this.rating = rating;
+        this.opened = opened;
+        this.published = published;
+        this.setCategories(categories);
+        this.setGenres(genres);
+        this.setCastMembers(castMembers);
+
+        this.updatedAt = InstantUtils.now();
     }
 }
