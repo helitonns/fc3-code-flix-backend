@@ -5,20 +5,20 @@ import com.fullcycle.admin.catalogo.domain.ValueObject;
 
 public class AudioVideoMedia extends ValueObject {
 
-    private final String checksun;
+    private final String checksum;
     private final String name;
     private final String rawLocation;
     private final String encodedLocation;
     private final MediaStatus status;
     
     private AudioVideoMedia(
-        final String checksun, 
+        final String checksum, 
         final String name, 
         final String rawLocation, 
         final String encodedLocation, 
         final MediaStatus status
     ) {
-        this.checksun = Objects.requireNonNull(checksun);
+        this.checksum = Objects.requireNonNull(checksum);
         this.name = Objects.requireNonNull(name);
         this.rawLocation = Objects.requireNonNull(rawLocation);
         this.encodedLocation = Objects.requireNonNull(encodedLocation);
@@ -26,17 +26,17 @@ public class AudioVideoMedia extends ValueObject {
     }
 
     public static AudioVideoMedia with(
-        final String checksun, 
+        final String checksum, 
         final String name, 
         final String rawLocation, 
         final String encodedLocation, 
         final MediaStatus status
     ){
-        return new AudioVideoMedia(checksun, name, rawLocation, encodedLocation, status);
+        return new AudioVideoMedia(checksum, name, rawLocation, encodedLocation, status);
     }
 
-    public String checksun() {
-        return checksun;
+    public String checksum() {
+        return checksum;
     }
 
     public String name() {
@@ -59,7 +59,7 @@ public class AudioVideoMedia extends ValueObject {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((checksun == null) ? 0 : checksun.hashCode());
+        result = prime * result + ((checksum == null) ? 0 : checksum.hashCode());
         result = prime * result + ((rawLocation == null) ? 0 : rawLocation.hashCode());
         return result;
     }
@@ -73,10 +73,10 @@ public class AudioVideoMedia extends ValueObject {
         if (getClass() != obj.getClass())
             return false;
         AudioVideoMedia other = (AudioVideoMedia) obj;
-        if (checksun == null) {
-            if (other.checksun != null)
+        if (checksum == null) {
+            if (other.checksum != null)
                 return false;
-        } else if (!checksun.equals(other.checksun))
+        } else if (!checksum.equals(other.checksum))
             return false;
         if (rawLocation == null) {
             if (other.rawLocation != null)
