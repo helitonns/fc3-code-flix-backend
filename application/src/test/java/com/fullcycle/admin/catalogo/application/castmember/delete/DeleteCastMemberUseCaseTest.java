@@ -29,7 +29,7 @@ public class DeleteCastMemberUseCaseTest extends UseCaseTest{
     @Test
     public void givenAValidId_whenCallsDeleteCastMember_shouldDeleteIt(){
         //givem
-        final var member = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+        final var member = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type());
         final var expectedId = member.getId();
 
         Mockito.doNothing().when(castMemberGatway).deleteById(Mockito.any());
@@ -58,7 +58,7 @@ public class DeleteCastMemberUseCaseTest extends UseCaseTest{
     @Test
     public void givenAValidId_whenCallsDeleteCastMemberAndGatwayThrowsException_shouldReceiveException(){
         //givem
-        final var member = CastMember.newMember(Fixture.name(), Fixture.CastMember.type());
+        final var member = CastMember.newMember(Fixture.name(), Fixture.CastMembers.type());
         final var expectedId = member.getId();
 
         Mockito.doThrow(new IllegalStateException("Gatway error")).when(castMemberGatway).deleteById(Mockito.any());

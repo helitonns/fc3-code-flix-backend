@@ -1,6 +1,10 @@
 package com.fullcycle.admin.catalogo.application;
 
+import com.fullcycle.admin.catalogo.domain.entity.castmember.CastMember;
 import com.fullcycle.admin.catalogo.domain.entity.castmember.CastMemberType;
+import com.fullcycle.admin.catalogo.domain.entity.category.Category;
+import com.fullcycle.admin.catalogo.domain.entity.genre.Genre;
+import com.fullcycle.admin.catalogo.domain.entity.video.Rating;
 import com.github.javafaker.Faker;
 
 public final class Fixture {
@@ -10,12 +14,65 @@ public final class Fixture {
     public static String name(){
         return FAKER.name().fullName();
     }
+    
+    public static String title(){
+        return FAKER.options().option("Naruto", "One Piece", "Bleach", "Full Metal Achimist");
+    }
+
+    public static Integer year(){
+        return FAKER.random().nextInt(2020, 2030);
+    }
+    
+    public static Double duration(){
+        return FAKER.options().option(120.0, 15.5, 35.0, 10.0, 2.0);
+    }
+    
+    public static boolean bool(){
+        return FAKER.bool().bool();
+    }
+
 
     //__________________________________________________________________________
-    public static final class CastMember {
-        
+    public static final class Categories {
+        private static final Category AULAS = Category.newCategory("Aulas", "Some description", true);
+
+        public static Category aulas(){
+            return Category.with(AULAS);
+        }
+    }
+    
+    public static final class Genres {
+        private static final Genre TECH = Genre.newGenre("Tech", true);
+
+        public static Genre tech(){
+            return Genre.with(TECH);
+        }
+    }
+
+    public static final class CastMembers {
+        private static final CastMember WESLEY = CastMember.newMember("Wesley Fullcycle", CastMemberType.ACTOR);
+        private static final CastMember HELITON = CastMember.newMember("Heliton", CastMemberType.DIRECTOR);
+
         public static CastMemberType type(){
             return FAKER.options().option(CastMemberType.ACTOR, CastMemberType.DIRECTOR);
+        }
+
+        public static CastMember wesley(){
+            return CastMember.with(WESLEY);
+        }
+        
+        public static CastMember heliton(){
+            return CastMember.with(HELITON);
+        }
+    }
+    
+    public static final class Videos {
+        public static String description(){
+            return FAKER.options().option("Descrição 11111","Descrição 22222","Descrição 33333","Descrição 44444");
+        }
+
+        public static Rating rating(){
+            return FAKER.options().option(Rating.values());
         }
     }
 }
