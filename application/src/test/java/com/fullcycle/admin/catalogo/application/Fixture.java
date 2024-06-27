@@ -6,6 +6,7 @@ import com.fullcycle.admin.catalogo.domain.entity.category.Category;
 import com.fullcycle.admin.catalogo.domain.entity.genre.Genre;
 import com.fullcycle.admin.catalogo.domain.entity.video.Rating;
 import com.github.javafaker.Faker;
+import io.vavr.API;
 
 public final class Fixture {
 
@@ -74,5 +75,17 @@ public final class Fixture {
         public static Rating rating(){
             return FAKER.options().option(Rating.values());
         }
+
+        public static Resource resource(final Resource.Type type){
+            final String contentType = API.Match(type).of(
+                API.Case($(List(Type.VIDEO, Type.TRAILER), "video/mp4"),
+                API.Case($(), "image/jpg")
+            );
+
+            final byte[] = content = "Conteudo".getBytes();
+
+            return Resource.of(content, contentType, type.name().toLowerCase(), type);
+        }
+
     }
 }
