@@ -1,5 +1,6 @@
 package com.fullcycle.admin.catalogo.infrastructure.entity.castmember;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
@@ -79,6 +80,12 @@ public class CastMemberMySQLGateway implements CastMemberGateway {
 
     private Specification<CastMemberJpaEntity> assembleSpecification(final String terms){
         return SpecificationUtils.like("name", terms);
+    }
+
+    @Override
+    public List<CastMemberID> existsByIds(Iterable<CastMemberID> ids) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'existsByIds'");
     }
 
 }

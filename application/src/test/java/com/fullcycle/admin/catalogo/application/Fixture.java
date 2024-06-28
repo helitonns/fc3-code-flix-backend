@@ -1,12 +1,16 @@
 package com.fullcycle.admin.catalogo.application;
 
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.List;
+import static io.vavr.API.Match;
 import com.fullcycle.admin.catalogo.domain.entity.castmember.CastMember;
 import com.fullcycle.admin.catalogo.domain.entity.castmember.CastMemberType;
 import com.fullcycle.admin.catalogo.domain.entity.category.Category;
 import com.fullcycle.admin.catalogo.domain.entity.genre.Genre;
 import com.fullcycle.admin.catalogo.domain.entity.video.Rating;
+import com.fullcycle.admin.catalogo.domain.entity.video.Resource;
 import com.github.javafaker.Faker;
-import io.vavr.API;
 
 public final class Fixture {
 
@@ -77,14 +81,14 @@ public final class Fixture {
         }
 
         public static Resource resource(final Resource.Type type){
-            final String contentType = API.Match(type).of(
-                API.Case($(List(Type.VIDEO, Type.TRAILER), "video/mp4"),
-                API.Case($(), "image/jpg")
+            final String contentType = Match(type).of(
+                Case($(List(Resource.Type.VIDEO, Resource.Type.TRAILER)::contains), "video/mp4"),
+                Case($(), "image/jpg")
             );
 
-            final byte[] = content = "Conteudo".getBytes();
+            final byte[] content = "Conteudo".getBytes();
 
-            return Resource.of(content, contentType, type.name().toLowerCase(), type);
+            return Resource.with(content, contentType, type.name().toLowerCase(), type);
         }
 
     }

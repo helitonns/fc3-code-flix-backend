@@ -72,7 +72,7 @@ public class GetGenreByIdUseCaseTest extends UseCaseTest {
     }
 
     //__________________________________________________________________________
-    private List<String> asString(final List<CategoryID> ids){
-        return ids.stream().map(CategoryID::getValue).toList();
-    }
+    // private List<String> asString(final List<CategoryID> ids){
+    //     return ids.stream().map(CategoryID::getValue).toList();
+    // }
 }

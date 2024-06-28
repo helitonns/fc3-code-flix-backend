@@ -203,7 +203,7 @@ class UpdateGenreUseCaseTest extends UseCaseTest{
     }
 
     //__________________________________________________________________________
-    private List<String> asString(final List<CategoryID> categories) {
-        return categories.stream().map(CategoryID::getValue).toList();
-    }
+    // private List<String> asString(final List<CategoryID> categories) {
+    //     return categories.stream().map(CategoryID::getValue).toList();
+    // }
 }
