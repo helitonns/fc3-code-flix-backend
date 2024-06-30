@@ -151,6 +151,7 @@ public interface MockDsl {
             .contentType(MediaType.APPLICATION_JSON)
             .content(Json.writeValueAsString(body));
 
+        @SuppressWarnings("null")
         final var actualId = this.mvc().perform(request)
             .andExpect(MockMvcResultMatchers.status().isCreated()).andReturn().getResponse()
             .getHeader("Location").replace("%s/".formatted(url), "");

@@ -11,7 +11,7 @@ import com.fullcycle.admin.catalogo.application.UseCaseTest;
 import com.fullcycle.admin.catalogo.domain.entity.category.Category;
 import com.fullcycle.admin.catalogo.domain.entity.category.CategoryGateway;
 import com.fullcycle.admin.catalogo.domain.entity.category.CategoryID;
-import com.fullcycle.admin.catalogo.domain.exceptions.DomainException;
+import com.fullcycle.admin.catalogo.domain.exceptions.InternalErrorException;
 
 public class GetCategoryByIdUseCaseTest extends UseCaseTest {
 
@@ -48,7 +48,7 @@ public class GetCategoryByIdUseCaseTest extends UseCaseTest {
 
         Mockito.when(categoryGateway.findById(Mockito.eq(expectId))).thenReturn(Optional.empty());
 
-        final var actualException = Assertions.assertThrows(DomainException.class, () -> useCase.execute(expectId.getValue()));
+        final var actualException = Assertions.assertThrows(InternalErrorException.class, () -> useCase.execute(expectId.getValue()));
 
         Assertions.assertEquals(expectedMessage, actualException.getMessage());
 

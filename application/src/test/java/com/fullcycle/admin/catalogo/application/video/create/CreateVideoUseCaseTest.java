@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
@@ -16,6 +17,10 @@ import com.fullcycle.admin.catalogo.application.UseCaseTest;
 import com.fullcycle.admin.catalogo.domain.entity.castmember.CastMemberGateway;
 import com.fullcycle.admin.catalogo.domain.entity.category.CategoryGateway;
 import com.fullcycle.admin.catalogo.domain.entity.genre.GenreGateway;
+import com.fullcycle.admin.catalogo.domain.entity.video.AudioVideoMedia;
+import com.fullcycle.admin.catalogo.domain.entity.video.ImageMedia;
+import com.fullcycle.admin.catalogo.domain.entity.video.MediaResourceGateway;
+import com.fullcycle.admin.catalogo.domain.entity.video.MediaStatus;
 import com.fullcycle.admin.catalogo.domain.entity.video.Resource;
 import com.fullcycle.admin.catalogo.domain.entity.video.VideoGateway;
 
@@ -35,10 +40,13 @@ public class CreateVideoUseCaseTest extends UseCaseTest {
     
     @Mock
     private CastMemberGateway castMemberGateway;
+    
+    @Mock
+    private MediaResourceGateway mediaResourceGateway;
 
     @Override
     protected List<Object> getMocks() {
-        return List.of(videoGateway);
+        return List.of(videoGateway, categoryGateway, genreGateway, castMemberGateway, mediaResourceGateway);
     }
     
     //__________________________________________________________________________
@@ -85,6 +93,10 @@ public class CreateVideoUseCaseTest extends UseCaseTest {
         Mockito.when(genreGateway.existsByIds(Mockito.any())).thenReturn(new ArrayList<>(expectedGenres));
         Mockito.when(castMemberGateway.existsByIds(Mockito.any())).thenReturn(new ArrayList<>(expectedMembers));
         Mockito.when(videoGateway.create(Mockito.any())).thenAnswer(AdditionalAnswers.returnsFirstArg());
+
+        mockImageMedia();
+        mockAudioVideoMedia();
+
         //when
         final var actualResult = useCase.execute(command);
 
@@ -103,15 +115,28 @@ public class CreateVideoUseCaseTest extends UseCaseTest {
             && Objects.equals(expectedCategories, actualVideo.getCategories())
             && Objects.equals(expectedGenres, actualVideo.getGenres())
             && Objects.equals(expectedMembers, actualVideo.getCastMembers())
-            // && actualVideo.getVideo().isPresent()
-            // && actualVideo.getTrailer().isPresent()
-            // && actualVideo.getBanner().isPresent()
-            // && actualVideo.getThumbnail().isPresent()
-            // && actualVideo.getThumbnailHalf().isPresent()
+            && actualVideo.getVideo().isPresent()
+            && actualVideo.getTrailer().isPresent()
+            && actualVideo.getBanner().isPresent()
+            && actualVideo.getThumbnail().isPresent()
+            && actualVideo.getThumbnailHalf().isPresent()
         ));
 
     }
 
+    private void mockImageMedia(){
+        Mockito.when(mediaResourceGateway.storeImage(Mockito.any(), Mockito.any())).thenAnswer(t -> {
+            final var resource = t.getArgument(1, Resource.class);
+            return ImageMedia.with(UUID.randomUUID().toString(), resource.name(), "/img");
+        });
+    }
+    
+    private void mockAudioVideoMedia(){
+        Mockito.when(mediaResourceGateway.storeAudioVideo(Mockito.any(), Mockito.any())).thenAnswer(t -> {
+            final var resource = t.getArgument(1, Resource.class);
+            return AudioVideoMedia.with(UUID.randomUUID().toString(), resource.name(), "/img", "", MediaStatus.PENDING);
+        });
+    }
 
 
 

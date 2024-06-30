@@ -15,10 +15,12 @@ import com.fullcycle.admin.catalogo.domain.entity.category.CategoryGateway;
 import com.fullcycle.admin.catalogo.domain.entity.category.CategoryID;
 import com.fullcycle.admin.catalogo.domain.entity.genre.GenreGateway;
 import com.fullcycle.admin.catalogo.domain.entity.genre.GenreID;
+import com.fullcycle.admin.catalogo.domain.entity.video.MediaResourceGateway;
 import com.fullcycle.admin.catalogo.domain.entity.video.Rating;
 import com.fullcycle.admin.catalogo.domain.entity.video.Video;
 import com.fullcycle.admin.catalogo.domain.entity.video.VideoGateway;
 import com.fullcycle.admin.catalogo.domain.exceptions.DomainException;
+import com.fullcycle.admin.catalogo.domain.exceptions.InternalErrorException;
 import com.fullcycle.admin.catalogo.domain.exceptions.NotificationException;
 import com.fullcycle.admin.catalogo.domain.validation.Error;
 import com.fullcycle.admin.catalogo.domain.validation.ValidationHandler;
@@ -30,18 +32,21 @@ public class DefaultCreateVideoUseCase extends CreateVideoUseCase {
     private final GenreGateway genreGateway;
     private final CastMemberGateway castMemberGateway;
     private final VideoGateway videoGateway;
+    private final MediaResourceGateway mediaResourceGateway;
 
     //__________________________________________________________________________
     public DefaultCreateVideoUseCase(
         final CategoryGateway categoryGateway, 
         final GenreGateway genreGateway,
         final CastMemberGateway castMemberGateway, 
-        final VideoGateway videoGateway
+        final VideoGateway videoGateway,
+        final MediaResourceGateway mediaResourceGateway
     ) {
         this.categoryGateway = Objects.requireNonNull(categoryGateway);
         this.genreGateway = Objects.requireNonNull(genreGateway);
         this.castMemberGateway = Objects.requireNonNull(castMemberGateway);
         this.videoGateway = Objects.requireNonNull(videoGateway);
+        this.mediaResourceGateway = Objects.requireNonNull(mediaResourceGateway);
     }
 
     @Override
@@ -80,7 +85,27 @@ public class DefaultCreateVideoUseCase extends CreateVideoUseCase {
     }
 
     private Video create(final CreateVideoCommand command, final Video video){
-        return this.videoGateway.create(video);
+        final var idVideo = video.getId();
+
+        try {
+            final var videoMedia = command.getVideo().map(it -> this.mediaResourceGateway.storeAudioVideo(idVideo, it)).orElse(null);
+            final var trailerMedia = command.getTrailer().map(it -> this.mediaResourceGateway.storeAudioVideo(idVideo, it)).orElse(null);
+            final var bannerMedia = command.getBanner().map(it -> this.mediaResourceGateway.storeImage(idVideo, it)).orElse(null);
+            final var thumbnailMedia = command.getThumbnail().map(it -> this.mediaResourceGateway.storeImage(idVideo, it)).orElse(null);
+            final var thumbnailHalfMedia = command.getThumbnailHalf().map(it -> this.mediaResourceGateway.storeImage(idVideo, it)).orElse(null);
+
+            return this.videoGateway.create(
+                video
+                .setVideo(videoMedia)
+                .setTrailer(trailerMedia)
+                .setBanner(bannerMedia)
+                .setThumbnail(thumbnailMedia)
+                .setThumbnailHalf(thumbnailHalfMedia)
+            );
+        } catch (final Throwable t) {
+            this.mediaResourceGateway.clearResource(idVideo);
+            throw InternalErrorException.with("An error on create video was observed [videoId: %s]".formatted(idVideo.getValue()), t);
+        }
     }
     
     private Supplier<DomainException> invalidRating(final String rating){

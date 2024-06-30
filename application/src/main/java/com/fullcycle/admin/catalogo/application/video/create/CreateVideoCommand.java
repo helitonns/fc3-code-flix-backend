@@ -1,5 +1,6 @@
 package com.fullcycle.admin.catalogo.application.video.create;
 
+import java.util.Optional;
 import java.util.Set;
 import com.fullcycle.admin.catalogo.domain.entity.video.Resource;
 
@@ -38,5 +39,25 @@ public record CreateVideoCommand(
         final Resource thumbnialHalf
     ){
         return new CreateVideoCommand(title, description, launchedAt, duration, opened, plublished, rating, categories, genres, members, video, trailer, banner, thumbnail, thumbnialHalf);
+    }
+
+    public Optional<Resource> getVideo(){
+        return Optional.ofNullable(video);
+    }
+    
+    public Optional<Resource> getTrailer(){
+        return Optional.ofNullable(trailer);
+    }
+    
+    public Optional<Resource> getBanner(){
+        return Optional.ofNullable(banner);
+    }
+    
+    public Optional<Resource> getThumbnail(){
+        return Optional.ofNullable(thumbnail);
+    }
+    
+    public Optional<Resource> getThumbnailHalf(){
+        return Optional.ofNullable(thumbnialHalf);
     }
 }
