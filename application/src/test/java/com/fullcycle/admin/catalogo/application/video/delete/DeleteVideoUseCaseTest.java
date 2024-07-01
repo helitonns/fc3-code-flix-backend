@@ -33,7 +33,7 @@ public class DeleteVideoUseCaseTest extends UseCaseTest {
         Mockito.doNothing().when(videoGateway).deletebyId(Mockito.any());
         
         //when
-        Assertions.assertDoesNotThrow(()-> this.useCase.execute(expectedId));
+        Assertions.assertDoesNotThrow(()-> this.useCase.execute(expectedId.getValue()));
 
         //then
         Mockito.verify(videoGateway).deletebyId(Mockito.eq(expectedId));
@@ -47,7 +47,7 @@ public class DeleteVideoUseCaseTest extends UseCaseTest {
         Mockito.doNothing().when(videoGateway).deletebyId(Mockito.any());
         
         //when
-        Assertions.assertDoesNotThrow(()-> this.useCase.execute(expectedId));
+        Assertions.assertDoesNotThrow(()-> this.useCase.execute(expectedId.getValue()));
 
         //then
         Mockito.verify(videoGateway).deletebyId(Mockito.eq(expectedId));
@@ -62,7 +62,7 @@ public class DeleteVideoUseCaseTest extends UseCaseTest {
         .when(videoGateway).deletebyId(Mockito.any());
         
         //when
-        Assertions.assertThrows(InternalErrorException.class, ()-> this.useCase.execute(expectedId));
+        Assertions.assertThrows(InternalErrorException.class, ()-> this.useCase.execute(expectedId.getValue()));
 
         //then
         Mockito.verify(videoGateway).deletebyId(Mockito.eq(expectedId));
