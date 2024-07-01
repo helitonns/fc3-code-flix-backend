@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import com.fullcycle.admin.catalogo.domain.Identifier;
 import com.fullcycle.admin.catalogo.domain.entity.castmember.CastMemberGateway;
@@ -19,7 +18,6 @@ import com.fullcycle.admin.catalogo.domain.entity.video.MediaResourceGateway;
 import com.fullcycle.admin.catalogo.domain.entity.video.Rating;
 import com.fullcycle.admin.catalogo.domain.entity.video.Video;
 import com.fullcycle.admin.catalogo.domain.entity.video.VideoGateway;
-import com.fullcycle.admin.catalogo.domain.exceptions.DomainException;
 import com.fullcycle.admin.catalogo.domain.exceptions.InternalErrorException;
 import com.fullcycle.admin.catalogo.domain.exceptions.NotificationException;
 import com.fullcycle.admin.catalogo.domain.validation.Error;
@@ -51,13 +49,14 @@ public class DefaultCreateVideoUseCase extends CreateVideoUseCase {
 
     @Override
     public CreateVideoOutput execute(final CreateVideoCommand command) {
-        final var rating = Rating.of(command.rating()).orElseThrow(invalidRating(command.rating()));
-        final var launchYear = Year.of(command.launchedAt());
+        final var notification = Notification.create();
+
+        final var rating = Rating.of(command.rating()).orElse(null);
+        final var launchYear = command.launchedAt() != null ? Year.of(command.launchedAt()) : null;
         final var categories = toIdentifier(command.categories(), CategoryID::from);
         final var genres = toIdentifier(command.genres(), GenreID::from);
         final var members = toIdentifier(command.members(), CastMemberID::from);
 
-        final var notification = Notification.create();
         notification.append(validateCategories(categories));
         notification.append(validateGenres(genres));
         notification.append(validateMembers(members));
@@ -108,9 +107,9 @@ public class DefaultCreateVideoUseCase extends CreateVideoUseCase {
         }
     }
     
-    private Supplier<DomainException> invalidRating(final String rating){
-        return ()-> DomainException.with(new Error("Rating not found %s".formatted(rating)));
-    }
+    // private Supplier<DomainException> invalidRating(final String rating){
+    //     return ()-> DomainException.with(new Error("Rating not found %s".formatted(rating)));
+    // }
 
     private <T> Set<T> toIdentifier(final Set<String> ids, final Function<String, T> mapper){
         return ids.stream()
