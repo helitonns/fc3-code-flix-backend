@@ -130,6 +130,7 @@ public class Video extends AggregateRoot<VideoID> {
     public Video updateTrailerMedia(final AudioVideoMedia trailer) {
         this.trailer = trailer;
         this.updatedAt = InstantUtils.now();
+        
         onAudioVideoMediaUpdated(trailer);
         return this;
     }
@@ -137,6 +138,7 @@ public class Video extends AggregateRoot<VideoID> {
     public Video updateVideoMedia(final AudioVideoMedia video) {
         this.video = video;
         this.updatedAt = InstantUtils.now();
+
         onAudioVideoMediaUpdated(video);
         return this;
     }
@@ -327,25 +329,19 @@ public class Video extends AggregateRoot<VideoID> {
 
     public Video processing(final VideoMediaType aType) {
         if (VideoMediaType.VIDEO == aType) {
-            getVideo()
-                    .ifPresent(media -> updateVideoMedia(media.processing()));
+            getVideo().ifPresent(media -> updateVideoMedia(media.processing()));
         } else if (VideoMediaType.TRAILER == aType) {
-            getTrailer()
-                    .ifPresent(media -> updateTrailerMedia(media.processing()));
+            getTrailer().ifPresent(media -> updateTrailerMedia(media.processing()));
         }
-
         return this;
     }
 
     public Video completed(final VideoMediaType aType, final String encodedPath) {
         if (VideoMediaType.VIDEO == aType) {
-            getVideo()
-                    .ifPresent(media -> updateVideoMedia(media.completed(encodedPath)));
+            getVideo().ifPresent(media -> updateVideoMedia(media.completed(encodedPath)));
         } else if (VideoMediaType.TRAILER == aType) {
-            getTrailer()
-                    .ifPresent(media -> updateTrailerMedia(media.completed(encodedPath)));
+            getTrailer().ifPresent(media -> updateTrailerMedia(media.completed(encodedPath)));
         }
-
         return this;
     }
 
