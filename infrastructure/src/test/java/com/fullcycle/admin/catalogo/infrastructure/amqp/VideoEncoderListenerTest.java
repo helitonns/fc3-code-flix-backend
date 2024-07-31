@@ -29,82 +29,79 @@ import static org.mockito.Mockito.verify;
 @AmqpTest
 public class VideoEncoderListenerTest {
 
-    @Autowired
-    private TestRabbitTemplate rabbitTemplate;
+        @Autowired
+        private TestRabbitTemplate rabbitTemplate;
 
-    @Autowired
-    private RabbitListenerTestHarness harness;
+        @Autowired
+        private RabbitListenerTestHarness harness;
 
-    @MockBean
-    private UpdateMediaStatusUseCase updateMediaStatusUseCase;
+        @MockBean
+        private UpdateMediaStatusUseCase updateMediaStatusUseCase;
 
-    @Autowired
-    @VideoEncodedQueue
-    private QueueProperties queueProperties;
+        @Autowired
+        @VideoEncodedQueue
+        private QueueProperties queueProperties;
 
-    @Test
-    public void givenErrorResult_whenCallsListener_shouldProcess() throws InterruptedException {
-        // given
-        final var expectedError = new VideoEncoderError(
-                new VideoMessage("123", "abc"),
-                "Video not found"
-        );
+        @Test
+        public void givenErrorResult_whenCallsListener_shouldProcess() throws InterruptedException {
+                // given
+                final var expectedError = new VideoEncoderError(
+                        new VideoMessage("123", "abc"), 
+                        "Video not found"
+                );
 
-        final var expectedMessage = Json.writeValueAsString(expectedError);
+                final var expectedMessage = Json.writeValueAsString(expectedError);
 
-        // when
-        this.rabbitTemplate.convertAndSend(queueProperties.getQueue(), expectedMessage);
+                // when
+                this.rabbitTemplate.convertAndSend(queueProperties.getQueue(), expectedMessage);
 
-        // then
-        final var invocationData =
-                harness.getNextInvocationDataFor(VideoEncoderListener.LISTENER_ID, 1, TimeUnit.SECONDS);
+                // then
+                final var invocationData = harness.getNextInvocationDataFor(VideoEncoderListener.LISTENER_ID, 1, TimeUnit.SECONDS);
 
-        Assertions.assertNotNull(invocationData);
-        Assertions.assertNotNull(invocationData.getArguments());
+                Assertions.assertNotNull(invocationData);
+                Assertions.assertNotNull(invocationData.getArguments());
 
-        final var actualMessage = (String) invocationData.getArguments()[0];
-        Assertions.assertEquals(expectedMessage, actualMessage);
-    }
+                final var actualMessage = (String) invocationData.getArguments()[0];
+                Assertions.assertEquals(expectedMessage, actualMessage);
+        }
 
-    @Test
-    public void givenCompletedResult_whenCallsListener_shouldCallUseCase() throws InterruptedException {
-        // given
-        final var expectedId = IdUtils.uuid();
-        final var expectedOutputBucket = "codeeducationtest";
-        final var expectedStatus = MediaStatus.COMPLETED;
-        final var expectedEncoderVideoFolder = "anyfolder";
-        final var expectedResourceId = IdUtils.uuid();
-        final var expectedFilePath = "any.mp4";
-        final var expectedMetadata =
-                new VideoMetadata(expectedEncoderVideoFolder, expectedResourceId, expectedFilePath);
+        @Test
+        public void givenCompletedResult_whenCallsListener_shouldCallUseCase() throws InterruptedException {
+                // given
+                final var expectedId = IdUtils.uuid();
+                final var expectedOutputBucket = "codeeducationtest";
+                final var expectedStatus = MediaStatus.COMPLETED;
+                final var expectedEncoderVideoFolder = "anyfolder";
+                final var expectedResourceId = IdUtils.uuid();
+                final var expectedFilePath = "any.mp4";
+                final var expectedMetadata = new VideoMetadata(expectedEncoderVideoFolder,expectedResourceId, expectedFilePath);
 
-        final var aResult = new VideoEncoderCompleted(expectedId, expectedOutputBucket, expectedMetadata);
+                final var aResult = new VideoEncoderCompleted(expectedId, expectedOutputBucket, expectedMetadata);
 
-        final var expectedMessage = Json.writeValueAsString(aResult);
+                final var expectedMessage = Json.writeValueAsString(aResult);
 
-        doNothing().when(updateMediaStatusUseCase).execute(any());
+                doNothing().when(updateMediaStatusUseCase).execute(any());
 
-        // when
-        this.rabbitTemplate.convertAndSend(queueProperties.getQueue(), expectedMessage);
+                // when
+                this.rabbitTemplate.convertAndSend(queueProperties.getQueue(), expectedMessage);
 
-        // then
-        final var invocationData =
-                harness.getNextInvocationDataFor(VideoEncoderListener.LISTENER_ID, 1, TimeUnit.SECONDS);
+                // then
+                final var invocationData = harness.getNextInvocationDataFor(VideoEncoderListener.LISTENER_ID, 1, TimeUnit.SECONDS);
 
-        Assertions.assertNotNull(invocationData);
-        Assertions.assertNotNull(invocationData.getArguments());
+                Assertions.assertNotNull(invocationData);
+                Assertions.assertNotNull(invocationData.getArguments());
 
-        final var actualMessage = (String) invocationData.getArguments()[0];
-        Assertions.assertEquals(expectedMessage, actualMessage);
+                final var actualMessage = (String) invocationData.getArguments()[0];
+                Assertions.assertEquals(expectedMessage, actualMessage);
 
-        final var cmdCaptor = ArgumentCaptor.forClass(UpdateMediaStatusCommand.class);
-        verify(updateMediaStatusUseCase).execute(cmdCaptor.capture());
+                final var cmdCaptor = ArgumentCaptor.forClass(UpdateMediaStatusCommand.class);
+                verify(updateMediaStatusUseCase).execute(cmdCaptor.capture());
 
-        final var actualCommand = cmdCaptor.getValue();
-        Assertions.assertEquals(expectedStatus, actualCommand.status());
-        Assertions.assertEquals(expectedId, actualCommand.videoId());
-        Assertions.assertEquals(expectedResourceId, actualCommand.resourceId());
-        Assertions.assertEquals(expectedEncoderVideoFolder, actualCommand.folder());
-        Assertions.assertEquals(expectedFilePath, actualCommand.filename());
-    }
+                final var actualCommand = cmdCaptor.getValue();
+                Assertions.assertEquals(expectedStatus, actualCommand.status());
+                Assertions.assertEquals(expectedId, actualCommand.videoId());
+                Assertions.assertEquals(expectedResourceId, actualCommand.resourceId());
+                Assertions.assertEquals(expectedEncoderVideoFolder, actualCommand.folder());
+                Assertions.assertEquals(expectedFilePath, actualCommand.filename());
+        }
 }
