@@ -35,11 +35,11 @@ public class VideoEncoderListener {
         if (aResult instanceof VideoEncoderCompleted dto) {
             log.error("[message:video.listener.income] [status:completed] [payload:{}]", message);
             final var aCmd = new UpdateMediaStatusCommand(
-                    MediaStatus.COMPLETED,
-                    dto.id(),
-                    dto.video().resourceId(),
-                    dto.video().encodedVideoFolder(),
-                    dto.video().filePath()
+                MediaStatus.COMPLETED,
+                dto.id(),
+                dto.video().resourceId(),
+                dto.video().encodedVideoFolder(),
+                dto.video().filePath()
             );
 
             this.updateMediaStatusUseCase.execute(aCmd);
