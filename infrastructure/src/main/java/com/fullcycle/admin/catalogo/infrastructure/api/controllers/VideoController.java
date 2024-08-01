@@ -70,26 +70,6 @@ public class VideoController implements VideoAPI {
     }
 
     @Override
-    public Pagination<VideoListResponse> list(
-            final String search,
-            final int page,
-            final int perPage,
-            final String sort,
-            final String direction,
-            final Set<String> castMembers,
-            final Set<String> categories,
-            final Set<String> genres
-    ) {
-        final var castMemberIDs = mapTo(castMembers, CastMemberID::from);
-        final var categoriesIDs = mapTo(categories, CategoryID::from);
-        final var genresIDs = mapTo(genres, GenreID::from);
-
-        final var aQuery = new VideoSearchQuery(page, perPage, search, sort, direction, castMemberIDs, categoriesIDs, genresIDs);
-
-        return VideoApiPresenter.present(this.listVideosUseCase.execute(aQuery));
-    }
-
-    @Override
     public ResponseEntity<?> createFull(
             final String aTitle,
             final String aDescription,
@@ -107,108 +87,130 @@ public class VideoController implements VideoAPI {
             final MultipartFile thumbFile,
             final MultipartFile thumbHalfFile
     ) {
-        final var aCmd = CreateVideoCommand.with(
-                aTitle,
-                aDescription,
-                launchedAt,
-                aDuration,
-                wasOpened,
-                wasPublished,
-                aRating,
-                categories,
-                genres,
-                castMembers,
-                resourceOf(videoFile),
-                resourceOf(trailerFile),
-                resourceOf(bannerFile),
-                resourceOf(thumbFile),
-                resourceOf(thumbHalfFile)
+        final var command = CreateVideoCommand.with(
+            aTitle,
+            aDescription,
+            launchedAt,
+            aDuration,
+            wasOpened,
+            wasPublished,
+            aRating,
+            categories,
+            genres,
+            castMembers,
+            resourceOf(videoFile),
+            resourceOf(trailerFile),
+            resourceOf(bannerFile),
+            resourceOf(thumbFile),
+            resourceOf(thumbHalfFile)
         );
 
-        final var output = this.createVideoUseCase.execute(aCmd);
+        final var output = this.createVideoUseCase.execute(command);
 
         return ResponseEntity.created(URI.create("/videos/" + output.id())).body(output);
     }
 
-    @Override
-    public ResponseEntity<?> createPartial(final CreateVideoRequest payload) {
-        final var aCmd = CreateVideoCommand.with(
-                payload.title(),
-                payload.description(),
-                payload.yearLaunched(),
-                payload.duration(),
-                payload.opened(),
-                payload.published(),
-                payload.rating(),
-                payload.categories(),
-                payload.genres(),
-                payload.castMembers()
-        );
+    // @Override
+    // public Pagination<VideoListResponse> list(
+    //         final String search,
+    //         final int page,
+    //         final int perPage,
+    //         final String sort,
+    //         final String direction,
+    //         final Set<String> castMembers,
+    //         final Set<String> categories,
+    //         final Set<String> genres
+    // ) {
+    //     final var castMemberIDs = mapTo(castMembers, CastMemberID::from);
+    //     final var categoriesIDs = mapTo(categories, CategoryID::from);
+    //     final var genresIDs = mapTo(genres, GenreID::from);
 
-        final var output = this.createVideoUseCase.execute(aCmd);
+    //     final var aQuery = new VideoSearchQuery(page, perPage, search, sort, direction, castMemberIDs, categoriesIDs, genresIDs);
 
-        return ResponseEntity.created(URI.create("/videos/" + output.id())).body(output);
-    }
+    //     return VideoApiPresenter.present(this.listVideosUseCase.execute(aQuery));
+    // }
 
-    @Override
-    public VideoResponse getById(final String anId) {
-        return VideoApiPresenter.present(this.getVideoByIdUseCase.execute(anId));
-    }
+    
 
-    @Override
-    public ResponseEntity<?> update(final String id, final UpdateVideoRequest payload) {
-        final var aCmd = UpdateVideoCommand.with(
-                id,
-                payload.title(),
-                payload.description(),
-                payload.yearLaunched(),
-                payload.duration(),
-                payload.opened(),
-                payload.published(),
-                payload.rating(),
-                payload.categories(),
-                payload.genres(),
-                payload.castMembers()
-        );
+    // @Override
+    // public ResponseEntity<?> createPartial(final CreateVideoRequest payload) {
+    //     final var aCmd = CreateVideoCommand.with(
+    //             payload.title(),
+    //             payload.description(),
+    //             payload.yearLaunched(),
+    //             payload.duration(),
+    //             payload.opened(),
+    //             payload.published(),
+    //             payload.rating(),
+    //             payload.categories(),
+    //             payload.genres(),
+    //             payload.castMembers()
+    //     );
 
-        final var output = this.updateVideoUseCase.execute(aCmd);
+    //     final var output = this.createVideoUseCase.execute(aCmd);
 
-        return ResponseEntity.ok()
-                .location(URI.create("/videos/" + output.id()))
-                .body(VideoApiPresenter.present(output));
-    }
+    //     return ResponseEntity.created(URI.create("/videos/" + output.id())).body(output);
+    // }
 
-    @Override
-    public void deleteById(final String id) {
-        this.deleteVideoUseCase.execute(id);
-    }
+    // @Override
+    // public VideoResponse getById(final String anId) {
+    //     return VideoApiPresenter.present(this.getVideoByIdUseCase.execute(anId));
+    // }
 
-    @Override
-    public ResponseEntity<byte[]> getMediaByType(final String id, final String type) {
-        final var aMedia =
-                this.getMediaUseCase.execute(GetMediaCommand.with(id, type));
+    // @Override
+    // public ResponseEntity<?> update(final String id, final UpdateVideoRequest payload) {
+    //     final var aCmd = UpdateVideoCommand.with(
+    //             id,
+    //             payload.title(),
+    //             payload.description(),
+    //             payload.yearLaunched(),
+    //             payload.duration(),
+    //             payload.opened(),
+    //             payload.published(),
+    //             payload.rating(),
+    //             payload.categories(),
+    //             payload.genres(),
+    //             payload.castMembers()
+    //     );
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(aMedia.contentType()))
-                .contentLength(aMedia.content().length)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(aMedia.name()))
-                .body(aMedia.content());
-    }
+    //     final var output = this.updateVideoUseCase.execute(aCmd);
 
-    @Override
-    public ResponseEntity<?> uploadMediaByType(final String id, final String type, final MultipartFile media) {
-        final var aType = VideoMediaType.of(type)
-                .orElseThrow(() -> NotificationException.with(new Error("Invalid %s for VideoMediaType".formatted(type))));
+    //     return ResponseEntity.ok()
+    //             .location(URI.create("/videos/" + output.id()))
+    //             .body(VideoApiPresenter.present(output));
+    // }
 
-        final var aCmd =
-                UploadMediaCommand.with(id, VideoResource.with(aType, resourceOf(media)));
+    // @Override
+    // public void deleteById(final String id) {
+    //     this.deleteVideoUseCase.execute(id);
+    // }
 
-        final var output = this.uploadMediaUseCase.execute(aCmd);
+    // @Override
+    // public ResponseEntity<byte[]> getMediaByType(final String id, final String type) {
+    //     final var aMedia =
+    //             this.getMediaUseCase.execute(GetMediaCommand.with(id, type));
 
-        return ResponseEntity
-                .created(URI.create("/videos/%s/medias/%s".formatted(id, type)))
-                .body(VideoApiPresenter.present(output));
-    }
+    //     return ResponseEntity.ok()
+    //             .contentType(MediaType.valueOf(aMedia.contentType()))
+    //             .contentLength(aMedia.content().length)
+    //             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(aMedia.name()))
+    //             .body(aMedia.content());
+    // }
+
+    // @Override
+    // public ResponseEntity<?> uploadMediaByType(final String id, final String type, final MultipartFile media) {
+    //     final var aType = VideoMediaType.of(type)
+    //             .orElseThrow(() -> NotificationException.with(new Error("Invalid %s for VideoMediaType".formatted(type))));
+
+    //     final var aCmd =
+    //             UploadMediaCommand.with(id, VideoResource.with(aType, resourceOf(media)));
+
+    //     final var output = this.uploadMediaUseCase.execute(aCmd);
+
+    //     return ResponseEntity
+    //             .created(URI.create("/videos/%s/medias/%s".formatted(id, type)))
+    //             .body(VideoApiPresenter.present(output));
+    // }
 
     private Resource resourceOf(final MultipartFile part) {
         if (part == null) {
@@ -217,10 +219,10 @@ public class VideoController implements VideoAPI {
 
         try {
             return Resource.with(
-                    part.getBytes(),
-                    HashingUtils.checksum(part.getBytes()),
-                    part.getContentType(),
-                    part.getOriginalFilename()
+                part.getBytes(),
+                HashingUtils.checksum(part.getBytes()),
+                part.getContentType(),
+                part.getOriginalFilename()
             );
         } catch (Throwable t) {
             throw new RuntimeException(t);

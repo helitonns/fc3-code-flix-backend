@@ -81,23 +81,23 @@ public class VideoAPITest {
         @MockBean
         private CreateVideoUseCase createVideoUseCase;
 
-        // @MockBean
-        // private GetVideoByIdUseCase getVideoByIdUseCase;
+        @MockBean
+        private GetVideoByIdUseCase getVideoByIdUseCase;
 
-        // @MockBean
-        // private UpdateVideoUseCase updateVideoUseCase;
+        @MockBean
+        private UpdateVideoUseCase updateVideoUseCase;
 
-        // @MockBean
-        // private DeleteVideoUseCase deleteVideoUseCase;
+        @MockBean
+        private DeleteVideoUseCase deleteVideoUseCase;
 
-        // @MockBean
-        // private ListVideosUseCase listVideosUseCase;
+        @MockBean
+        private ListVideosUseCase listVideosUseCase;
 
-        // @MockBean
-        // private GetMediaUseCase getMediaUseCase;
+        @MockBean
+        private GetMediaUseCase getMediaUseCase;
 
-        // @MockBean
-        // private UploadMediaUseCase uploadMediaUseCase;
+        @MockBean
+        private UploadMediaUseCase uploadMediaUseCase;
 
         @Test
         public void givenAValidCommand_whenCallsCreateFull_shouldReturnAnId() throws Exception {
