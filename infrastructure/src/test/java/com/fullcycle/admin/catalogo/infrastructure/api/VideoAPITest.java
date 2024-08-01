@@ -118,8 +118,7 @@ public class VideoAPITest {
                 final var expectedGenres = Set.of(tech.getId().getValue());
                 final var expectedMembers = Set.of(wesley.getId().getValue());
 
-                final var expectedVideo = new MockMultipartFile("video_file", "video.mp4",
-                                "video/mp4", "VIDEO".getBytes());
+                final var expectedVideo = new MockMultipartFile("video_file", "video.mp4", "video/mp4", "VIDEO".getBytes());
 
                 final var expectedTrailer = new MockMultipartFile("trailer_file", "trailer.mp4",
                                 "video/mp4", "TRAILER".getBytes());

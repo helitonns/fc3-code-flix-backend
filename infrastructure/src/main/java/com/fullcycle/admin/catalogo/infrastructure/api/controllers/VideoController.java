@@ -84,8 +84,7 @@ public class VideoController implements VideoAPI {
         final var categoriesIDs = mapTo(categories, CategoryID::from);
         final var genresIDs = mapTo(genres, GenreID::from);
 
-        final var aQuery =
-                new VideoSearchQuery(page, perPage, search, sort, direction, castMemberIDs, categoriesIDs, genresIDs);
+        final var aQuery = new VideoSearchQuery(page, perPage, search, sort, direction, castMemberIDs, categoriesIDs, genresIDs);
 
         return VideoApiPresenter.present(this.listVideosUseCase.execute(aQuery));
     }
