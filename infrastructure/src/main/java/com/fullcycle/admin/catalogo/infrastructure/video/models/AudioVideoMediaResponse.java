@@ -9,5 +9,4 @@ public record AudioVideoMediaResponse(
         @JsonProperty("location") String rawLocation,
         @JsonProperty("encoded_location") String encodedLocation,
         @JsonProperty("status") String status
-) {
-}
+) {}

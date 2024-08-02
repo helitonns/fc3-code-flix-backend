@@ -13,24 +13,24 @@ public interface VideoApiPresenter {
 
     static VideoResponse present(final VideoOutput output) {
         return new VideoResponse(
-                output.id(),
-                output.title(),
-                output.description(),
-                output.launchedAt(),
-                output.duration(),
-                output.opened(),
-                output.published(),
-                output.rating().getName(),
-                output.createdAt(),
-                output.updatedAt(),
-                present(output.banner()),
-                present(output.thumbnail()),
-                present(output.thumbnailHalf()),
-                present(output.video()),
-                present(output.trailer()),
-                output.categories(),
-                output.genres(),
-                output.castMembers()
+            output.id(),
+            output.title(),
+            output.description(),
+            output.launchedAt(),
+            output.duration(),
+            output.opened(),
+            output.published(),
+            output.rating().getName(),
+            output.createdAt(),
+            output.updatedAt(),
+            present(output.banner()),
+            present(output.thumbnail()),
+            present(output.thumbnailHalf()),
+            present(output.video()),
+            present(output.trailer()),
+            output.categories(),
+            output.genres(),
+            output.castMembers()
         );
     }
 
@@ -39,12 +39,12 @@ public interface VideoApiPresenter {
             return null;
         }
         return new AudioVideoMediaResponse(
-                media.id(),
-                media.checksum(),
-                media.name(),
-                media.rawLocation(),
-                media.encodedLocation(),
-                media.status().name()
+            media.id(),
+            media.checksum(),
+            media.name(),
+            media.rawLocation(),
+            media.encodedLocation(),
+            media.status().name()
         );
     }
 
@@ -53,10 +53,10 @@ public interface VideoApiPresenter {
             return null;
         }
         return new ImageMediaResponse(
-                image.id(),
-                image.checksum(),
-                image.name(),
-                image.location()
+            image.id(),
+            image.checksum(),
+            image.name(),
+            image.location()
         );
     }
 
@@ -66,11 +66,11 @@ public interface VideoApiPresenter {
 
     static VideoListResponse present(final VideoListOutput output) {
         return new VideoListResponse(
-                output.id(),
-                output.title(),
-                output.description(),
-                output.createdAt(),
-                output.updatedAt()
+            output.id(),
+            output.title(),
+            output.description(),
+            output.createdAt(),
+            output.updatedAt()
         );
     }
 

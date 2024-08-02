@@ -7,5 +7,4 @@ public record ImageMediaResponse(
         @JsonProperty("checksum") String checksum,
         @JsonProperty("name") String name,
         @JsonProperty("location") String location
-) {
-}
+) {}

@@ -130,6 +130,13 @@ public class VideoController implements VideoAPI {
         return ResponseEntity.created(URI.create("/videos/" + output.id())).body(output);
     }
 
+    @Override
+    public VideoResponse getById(final String anId) {
+        return VideoApiPresenter.present(this.getVideoByIdUseCase.execute(anId));
+    }
+
+
+    
     // @Override
     // public Pagination<VideoListResponse> list(
     //         final String search,
@@ -154,10 +161,7 @@ public class VideoController implements VideoAPI {
 
     
 
-    // @Override
-    // public VideoResponse getById(final String anId) {
-    //     return VideoApiPresenter.present(this.getVideoByIdUseCase.execute(anId));
-    // }
+    
 
     // @Override
     // public ResponseEntity<?> update(final String id, final UpdateVideoRequest payload) {

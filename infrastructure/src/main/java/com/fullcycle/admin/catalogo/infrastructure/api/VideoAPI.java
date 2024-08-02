@@ -45,6 +45,7 @@ public interface VideoAPI {
                 @RequestParam(name = "thumb_file", required = false) MultipartFile thumbFile,
                 @RequestParam(name = "thumb_half_file", required = false) MultipartFile thumbHalfFile
         );
+        //______________________________________________________________________________________________________________
 
         @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
         @Operation(summary = "Create a new video without medias")
@@ -56,8 +57,18 @@ public interface VideoAPI {
         ResponseEntity<?> createPartial(@RequestBody CreateVideoRequest payload);
         //______________________________________________________________________________________________________________
 
+        @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+        @Operation(summary = "Get a video by it's identifier")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Video retrieved successfully"),
+                @ApiResponse(responseCode = "404", description = "Video was not found"),
+                @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+        })
+        VideoResponse getById(@PathVariable(name = "id") String id);
         //______________________________________________________________________________________________________________
 
+
+        
         // @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         // @Operation(summary = "List all videos paginated")
         // @ApiResponses(
@@ -77,15 +88,7 @@ public interface VideoAPI {
         // );
         // //______________________________________________________________________________________________________________
 
-        // @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-        // @Operation(summary = "Get a video by it's identifier")
-        // @ApiResponses(value = {
-        //                 @ApiResponse(responseCode = "200",
-        //                                 description = "Video retrieved successfully"),
-        //                 @ApiResponse(responseCode = "404", description = "Video was not found"),
-        //                 @ApiResponse(responseCode = "500",
-        //                                 description = "An internal server error was thrown"),})
-        // VideoResponse getById(@PathVariable(name = "id") String id);
+        
 
         // @PutMapping(value = "{id}", consumes = MediaType.APPLICATION_JSON_VALUE,
         //                 produces = MediaType.APPLICATION_JSON_VALUE)
@@ -100,6 +103,7 @@ public interface VideoAPI {
         //                                 description = "An internal server error was thrown"),})
         // ResponseEntity<?> update(@PathVariable(name = "id") String id,
         //                 @RequestBody UpdateVideoRequest payload);
+        //______________________________________________________________________________________________________________
 
         // @DeleteMapping(value = "{id}")
         // @ResponseStatus(HttpStatus.NO_CONTENT)
