@@ -110,6 +110,26 @@ public class VideoController implements VideoAPI {
         return ResponseEntity.created(URI.create("/videos/" + output.id())).body(output);
     }
 
+    @Override
+    public ResponseEntity<?> createPartial(final CreateVideoRequest payload) {
+        final var command = CreateVideoCommand.with(
+            payload.title(),
+            payload.description(),
+            payload.yearLaunched(),
+            payload.duration(),
+            payload.opened(),
+            payload.published(),
+            payload.rating(),
+            payload.categories(),
+            payload.genres(),
+            payload.castMembers()
+        );
+
+        final var output = this.createVideoUseCase.execute(command);
+
+        return ResponseEntity.created(URI.create("/videos/" + output.id())).body(output);
+    }
+
     // @Override
     // public Pagination<VideoListResponse> list(
     //         final String search,
@@ -132,25 +152,7 @@ public class VideoController implements VideoAPI {
 
     
 
-    // @Override
-    // public ResponseEntity<?> createPartial(final CreateVideoRequest payload) {
-    //     final var aCmd = CreateVideoCommand.with(
-    //             payload.title(),
-    //             payload.description(),
-    //             payload.yearLaunched(),
-    //             payload.duration(),
-    //             payload.opened(),
-    //             payload.published(),
-    //             payload.rating(),
-    //             payload.categories(),
-    //             payload.genres(),
-    //             payload.castMembers()
-    //     );
-
-    //     final var output = this.createVideoUseCase.execute(aCmd);
-
-    //     return ResponseEntity.created(URI.create("/videos/" + output.id())).body(output);
-    // }
+    
 
     // @Override
     // public VideoResponse getById(final String anId) {

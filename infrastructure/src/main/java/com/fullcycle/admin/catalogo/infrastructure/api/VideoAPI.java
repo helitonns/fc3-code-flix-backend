@@ -45,6 +45,17 @@ public interface VideoAPI {
                 @RequestParam(name = "thumb_file", required = false) MultipartFile thumbFile,
                 @RequestParam(name = "thumb_half_file", required = false) MultipartFile thumbHalfFile
         );
+
+        @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+        @Operation(summary = "Create a new video without medias")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "201", description = "Created successfully"),
+                @ApiResponse(responseCode = "422", description = "A validation error was thrown"),
+                @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+        })
+        ResponseEntity<?> createPartial(@RequestBody CreateVideoRequest payload);
+        //______________________________________________________________________________________________________________
+
         //______________________________________________________________________________________________________________
 
         // @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -64,18 +75,6 @@ public interface VideoAPI {
         //         @RequestParam(name = "categories_ids", required = false, defaultValue = "") Set<String> categories,
         //         @RequestParam(name = "genres_ids", required = false, defaultValue = "") Set<String> genres
         // );
-        // //______________________________________________________________________________________________________________
-
-        
-
-        // @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-        // @Operation(summary = "Create a new video without medias")
-        // @ApiResponses(value = {
-        //         @ApiResponse(responseCode = "201", description = "Created successfully"),
-        //         @ApiResponse(responseCode = "422", description = "A validation error was thrown"),
-        //         @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
-        // })
-        // ResponseEntity<?> createPartial(@RequestBody CreateVideoRequest payload);
         // //______________________________________________________________________________________________________________
 
         // @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
