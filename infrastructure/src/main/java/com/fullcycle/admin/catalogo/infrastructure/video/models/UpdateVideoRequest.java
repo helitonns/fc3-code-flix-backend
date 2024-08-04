@@ -15,5 +15,4 @@ public record UpdateVideoRequest(
         @JsonProperty("cast_members") Set<String> castMembers,
         @JsonProperty("categories") Set<String> categories,
         @JsonProperty("genres") Set<String> genres
-) {
-}
+) {}

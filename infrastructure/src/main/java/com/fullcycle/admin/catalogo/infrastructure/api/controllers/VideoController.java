@@ -135,6 +135,29 @@ public class VideoController implements VideoAPI {
         return VideoApiPresenter.present(this.getVideoByIdUseCase.execute(anId));
     }
 
+    @Override
+    public ResponseEntity<?> update(final String id, final UpdateVideoRequest payload) {
+        final var command = UpdateVideoCommand.with(
+            id,
+            payload.title(),
+            payload.description(),
+            payload.yearLaunched(),
+            payload.duration(),
+            payload.opened(),
+            payload.published(),
+            payload.rating(),
+            payload.categories(),
+            payload.genres(),
+            payload.castMembers()
+        );
+
+        final var output = this.updateVideoUseCase.execute(command);
+
+        return ResponseEntity.ok()
+            .location(URI.create("/videos/" + output.id()))
+            .body(VideoApiPresenter.present(output));
+    }
+
 
     
     // @Override
@@ -163,28 +186,7 @@ public class VideoController implements VideoAPI {
 
     
 
-    // @Override
-    // public ResponseEntity<?> update(final String id, final UpdateVideoRequest payload) {
-    //     final var aCmd = UpdateVideoCommand.with(
-    //             id,
-    //             payload.title(),
-    //             payload.description(),
-    //             payload.yearLaunched(),
-    //             payload.duration(),
-    //             payload.opened(),
-    //             payload.published(),
-    //             payload.rating(),
-    //             payload.categories(),
-    //             payload.genres(),
-    //             payload.castMembers()
-    //     );
-
-    //     final var output = this.updateVideoUseCase.execute(aCmd);
-
-    //     return ResponseEntity.ok()
-    //             .location(URI.create("/videos/" + output.id()))
-    //             .body(VideoApiPresenter.present(output));
-    // }
+    
 
     // @Override
     // public void deleteById(final String id) {
