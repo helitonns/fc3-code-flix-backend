@@ -12,11 +12,11 @@ public record VideoPreview(
 
     public VideoPreview(final Video aVideo) {
         this(
-                aVideo.getId().getValue(),
-                aVideo.getTitle(),
-                aVideo.getDescription(),
-                aVideo.getCreatedAt(),
-                aVideo.getUpdatedAt()
+            aVideo.getId().getValue(),
+            aVideo.getTitle(),
+            aVideo.getDescription(),
+            aVideo.getCreatedAt(),
+            aVideo.getUpdatedAt()
         );
     }
 }

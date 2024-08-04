@@ -487,6 +487,123 @@ public class VideoAPITest {
                 verify(deleteVideoUseCase).execute(eq(expectedId.getValue()));
         }
 
+        @Test
+        public void givenValidParams_whenCallsListVideos_shouldReturnPagination() throws Exception {
+                // given
+                final var aVideo = new VideoPreview(Fixture.video());
+
+                final var expectedPage = 50;
+                final var expectedPerPage = 50;
+                final var expectedTerms = "Algo";
+                final var expectedSort = "title";
+                final var expectedDirection = "asc";
+                final var expectedCastMembers = "cast1";
+                final var expectedGenres = "gen1";
+                final var expectedCategories = "cat1";
+
+                final var expectedItemsCount = 1;
+                final var expectedTotal = 1;
+
+                final var expectedItems = List.of(VideoListOutput.from(aVideo));
+
+                when(listVideosUseCase.execute(any()))
+                        .thenReturn(new Pagination<>(expectedPage, expectedPerPage, expectedTotal, expectedItems));
+
+                // when
+                final var aRequest = get("/videos").with(ApiTest.GENRES_JWT)
+                        .queryParam("page", String.valueOf(expectedPage))
+                        .queryParam("perPage", String.valueOf(expectedPerPage))
+                        .queryParam("sort", expectedSort)
+                        .queryParam("dir", expectedDirection)
+                        .queryParam("search", expectedTerms)
+                        .queryParam("cast_members_ids", expectedCastMembers)
+                        .queryParam("categories_ids", expectedCategories)
+                        .queryParam("genres_ids", expectedGenres)
+                        .accept(MediaType.APPLICATION_JSON);
+
+                final var response = this.mvc.perform(aRequest);
+
+                // then
+                response
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+                        .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+                        .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
+                        .andExpect(jsonPath("$.items", hasSize(expectedItemsCount)))
+                        .andExpect(jsonPath("$.items[0].id", equalTo(aVideo.id())))
+                        .andExpect(jsonPath("$.items[0].title", equalTo(aVideo.title())))
+                        .andExpect(jsonPath("$.items[0].description", equalTo(aVideo.description())))
+                        .andExpect(jsonPath("$.items[0].created_at", equalTo(aVideo.createdAt().toString())))
+                        .andExpect(jsonPath("$.items[0].updated_at", equalTo(aVideo.updatedAt().toString())));
+
+                final var captor = ArgumentCaptor.forClass(VideoSearchQuery.class);
+
+                verify(listVideosUseCase).execute(captor.capture());
+
+                final var actualQuery = captor.getValue();
+                Assertions.assertEquals(expectedPage, actualQuery.page());
+                Assertions.assertEquals(expectedPerPage, actualQuery.perPage());
+                Assertions.assertEquals(expectedDirection, actualQuery.direction());
+                Assertions.assertEquals(expectedSort, actualQuery.sort());
+                Assertions.assertEquals(expectedTerms, actualQuery.terms());
+                Assertions.assertEquals(Set.of(CategoryID.from(expectedCategories)), actualQuery.categories());
+                Assertions.assertEquals(Set.of(CastMemberID.from(expectedCastMembers)), actualQuery.castMembers());
+                Assertions.assertEquals(Set.of(GenreID.from(expectedGenres)), actualQuery.genres());
+        }
+
+        @Test
+        public void givenEmptyParams_whenCallsListVideosWithDefaultValues_shouldReturnPagination() throws Exception {
+                // given
+                final var aVideo = new VideoPreview(Fixture.video());
+
+                final var expectedPage = 0;
+                final var expectedPerPage = 25;
+                final var expectedTerms = "";
+                final var expectedSort = "title";
+                final var expectedDirection = "asc";
+
+                final var expectedItemsCount = 1;
+                final var expectedTotal = 1;
+
+                final var expectedItems = List.of(VideoListOutput.from(aVideo));
+
+                when(listVideosUseCase.execute(any()))
+                        .thenReturn(new Pagination<>(expectedPage, expectedPerPage, expectedTotal, expectedItems));
+
+                // when
+                final var aRequest = get("/videos").with(ApiTest.GENRES_JWT)
+                        .accept(MediaType.APPLICATION_JSON);
+
+                final var response = this.mvc.perform(aRequest);
+
+                // then
+                response
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+                        .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+                        .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
+                        .andExpect(jsonPath("$.items", hasSize(expectedItemsCount)))
+                        .andExpect(jsonPath("$.items[0].id", equalTo(aVideo.id())))
+                        .andExpect(jsonPath("$.items[0].title", equalTo(aVideo.title())))
+                        .andExpect(jsonPath("$.items[0].description", equalTo(aVideo.description())))
+                        .andExpect(jsonPath("$.items[0].created_at", equalTo(aVideo.createdAt().toString())))
+                        .andExpect(jsonPath("$.items[0].updated_at", equalTo(aVideo.updatedAt().toString())));
+
+                final var captor = ArgumentCaptor.forClass(VideoSearchQuery.class);
+
+                verify(listVideosUseCase).execute(captor.capture());
+
+                final var actualQuery = captor.getValue();
+                Assertions.assertEquals(expectedPage, actualQuery.page());
+                Assertions.assertEquals(expectedPerPage, actualQuery.perPage());
+                Assertions.assertEquals(expectedDirection, actualQuery.direction());
+                Assertions.assertEquals(expectedSort, actualQuery.sort());
+                Assertions.assertEquals(expectedTerms, actualQuery.terms());
+                Assertions.assertTrue(actualQuery.categories().isEmpty());
+                Assertions.assertTrue(actualQuery.castMembers().isEmpty());
+                Assertions.assertTrue(actualQuery.genres().isEmpty());
+        }
+
         // @Test
         // public void givenAnInvalidCommand_whenCallsCreateFull_shouldReturnError() throws Exception {
         //         // given
@@ -576,134 +693,6 @@ public class VideoAPITest {
         // }
 
         
-
-        
-
-        
-
-        // @Test
-        // public void givenValidParams_whenCallsListVideos_shouldReturnPagination() throws Exception {
-        //         // given
-        //         final var aVideo = new VideoPreview(Fixture.video());
-
-        //         final var expectedPage = 50;
-        //         final var expectedPerPage = 50;
-        //         final var expectedTerms = "Algo";
-        //         final var expectedSort = "title";
-        //         final var expectedDirection = "asc";
-        //         final var expectedCastMembers = "cast1";
-        //         final var expectedGenres = "gen1";
-        //         final var expectedCategories = "cat1";
-
-        //         final var expectedItemsCount = 1;
-        //         final var expectedTotal = 1;
-
-        //         final var expectedItems = List.of(VideoListOutput.from(aVideo));
-
-        //         when(listVideosUseCase.execute(any())).thenReturn(new Pagination<>(expectedPage,
-        //                         expectedPerPage, expectedTotal, expectedItems));
-
-        //         // when
-        //         final var aRequest = get("/videos").with(ApiTest.GENRES_JWT)
-        //                         .queryParam("page", String.valueOf(expectedPage))
-        //                         .queryParam("perPage", String.valueOf(expectedPerPage))
-        //                         .queryParam("sort", expectedSort)
-        //                         .queryParam("dir", expectedDirection)
-        //                         .queryParam("search", expectedTerms)
-        //                         .queryParam("cast_members_ids", expectedCastMembers)
-        //                         .queryParam("categories_ids", expectedCategories)
-        //                         .queryParam("genres_ids", expectedGenres)
-        //                         .accept(MediaType.APPLICATION_JSON);
-
-        //         final var response = this.mvc.perform(aRequest);
-
-        //         // then
-        //         response.andExpect(status().isOk())
-        //                         .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
-        //                         .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
-        //                         .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
-        //                         .andExpect(jsonPath("$.items", hasSize(expectedItemsCount)))
-        //                         .andExpect(jsonPath("$.items[0].id", equalTo(aVideo.id())))
-        //                         .andExpect(jsonPath("$.items[0].title", equalTo(aVideo.title())))
-        //                         .andExpect(jsonPath("$.items[0].description",
-        //                                         equalTo(aVideo.description())))
-        //                         .andExpect(jsonPath("$.items[0].created_at",
-        //                                         equalTo(aVideo.createdAt().toString())))
-        //                         .andExpect(jsonPath("$.items[0].updated_at",
-        //                                         equalTo(aVideo.updatedAt().toString())));
-
-        //         final var captor = ArgumentCaptor.forClass(VideoSearchQuery.class);
-
-        //         verify(listVideosUseCase).execute(captor.capture());
-
-        //         final var actualQuery = captor.getValue();
-        //         Assertions.assertEquals(expectedPage, actualQuery.page());
-        //         Assertions.assertEquals(expectedPerPage, actualQuery.perPage());
-        //         Assertions.assertEquals(expectedDirection, actualQuery.direction());
-        //         Assertions.assertEquals(expectedSort, actualQuery.sort());
-        //         Assertions.assertEquals(expectedTerms, actualQuery.terms());
-        //         Assertions.assertEquals(Set.of(CategoryID.from(expectedCategories)),
-        //                         actualQuery.categories());
-        //         Assertions.assertEquals(Set.of(CastMemberID.from(expectedCastMembers)),
-        //                         actualQuery.castMembers());
-        //         Assertions.assertEquals(Set.of(GenreID.from(expectedGenres)), actualQuery.genres());
-        // }
-
-        // @Test
-        // public void givenEmptyParams_whenCallsListVideosWithDefaultValues_shouldReturnPagination()
-        //                 throws Exception {
-        //         // given
-        //         final var aVideo = new VideoPreview(Fixture.video());
-
-        //         final var expectedPage = 0;
-        //         final var expectedPerPage = 25;
-        //         final var expectedTerms = "";
-        //         final var expectedSort = "title";
-        //         final var expectedDirection = "asc";
-
-        //         final var expectedItemsCount = 1;
-        //         final var expectedTotal = 1;
-
-        //         final var expectedItems = List.of(VideoListOutput.from(aVideo));
-
-        //         when(listVideosUseCase.execute(any())).thenReturn(new Pagination<>(expectedPage,
-        //                         expectedPerPage, expectedTotal, expectedItems));
-
-        //         // when
-        //         final var aRequest = get("/videos").with(ApiTest.GENRES_JWT)
-        //                         .accept(MediaType.APPLICATION_JSON);
-
-        //         final var response = this.mvc.perform(aRequest);
-
-        //         // then
-        //         response.andExpect(status().isOk())
-        //                         .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
-        //                         .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
-        //                         .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
-        //                         .andExpect(jsonPath("$.items", hasSize(expectedItemsCount)))
-        //                         .andExpect(jsonPath("$.items[0].id", equalTo(aVideo.id())))
-        //                         .andExpect(jsonPath("$.items[0].title", equalTo(aVideo.title())))
-        //                         .andExpect(jsonPath("$.items[0].description",
-        //                                         equalTo(aVideo.description())))
-        //                         .andExpect(jsonPath("$.items[0].created_at",
-        //                                         equalTo(aVideo.createdAt().toString())))
-        //                         .andExpect(jsonPath("$.items[0].updated_at",
-        //                                         equalTo(aVideo.updatedAt().toString())));
-
-        //         final var captor = ArgumentCaptor.forClass(VideoSearchQuery.class);
-
-        //         verify(listVideosUseCase).execute(captor.capture());
-
-        //         final var actualQuery = captor.getValue();
-        //         Assertions.assertEquals(expectedPage, actualQuery.page());
-        //         Assertions.assertEquals(expectedPerPage, actualQuery.perPage());
-        //         Assertions.assertEquals(expectedDirection, actualQuery.direction());
-        //         Assertions.assertEquals(expectedSort, actualQuery.sort());
-        //         Assertions.assertEquals(expectedTerms, actualQuery.terms());
-        //         Assertions.assertTrue(actualQuery.categories().isEmpty());
-        //         Assertions.assertTrue(actualQuery.castMembers().isEmpty());
-        //         Assertions.assertTrue(actualQuery.genres().isEmpty());
-        // }
 
         // @Test
         // public void givenAValidVideoIdAndFileType_whenCallsGetMediaById_shouldReturnContent()

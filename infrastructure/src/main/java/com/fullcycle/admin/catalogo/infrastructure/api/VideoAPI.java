@@ -86,25 +86,26 @@ public interface VideoAPI {
                 @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
         })
         void deleteById(@PathVariable(name = "id") String id);
-
-        // @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-        // @Operation(summary = "List all videos paginated")
-        // @ApiResponses(
-        //         value = {@ApiResponse(responseCode = "200", description = "Videos listed"),
-        //         @ApiResponse(responseCode = "422", description = "A query param was invalid"),
-        //         @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
-        // })
-        // Pagination<VideoListResponse> list(
-        //         @RequestParam(name = "search", required = false, defaultValue = "") String search,
-        //         @RequestParam(name = "page", required = false, defaultValue = "0") int page,
-        //         @RequestParam(name = "perPage", required = false, defaultValue = "25") int perPage,
-        //         @RequestParam(name = "sort", required = false, defaultValue = "title") String sort,
-        //         @RequestParam(name = "dir", required = false, defaultValue = "asc") String direction,
-        //         @RequestParam(name = "cast_members_ids", required = false, defaultValue = "") Set<String> castMembers,
-        //         @RequestParam(name = "categories_ids", required = false, defaultValue = "") Set<String> categories,
-        //         @RequestParam(name = "genres_ids", required = false, defaultValue = "") Set<String> genres
-        // );
-        // //______________________________________________________________________________________________________________
+        //______________________________________________________________________________________________________________
+        
+        @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+        @Operation(summary = "List all videos paginated")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Videos listed"),
+                @ApiResponse(responseCode = "422", description = "A query param was invalid"),
+                @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+        })
+        Pagination<VideoListResponse> list(
+                @RequestParam(name = "search", required = false, defaultValue = "") String search,
+                @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                @RequestParam(name = "perPage", required = false, defaultValue = "25") int perPage,
+                @RequestParam(name = "sort", required = false, defaultValue = "title") String sort,
+                @RequestParam(name = "dir", required = false, defaultValue = "asc") String direction,
+                @RequestParam(name = "cast_members_ids", required = false, defaultValue = "") Set<String> castMembers,
+                @RequestParam(name = "categories_ids", required = false, defaultValue = "") Set<String> categories,
+                @RequestParam(name = "genres_ids", required = false, defaultValue = "") Set<String> genres
+        );
+        //______________________________________________________________________________________________________________
 
         
 

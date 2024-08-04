@@ -163,25 +163,25 @@ public class VideoController implements VideoAPI {
         this.deleteVideoUseCase.execute(id);
     }
     
-    // @Override
-    // public Pagination<VideoListResponse> list(
-    //         final String search,
-    //         final int page,
-    //         final int perPage,
-    //         final String sort,
-    //         final String direction,
-    //         final Set<String> castMembers,
-    //         final Set<String> categories,
-    //         final Set<String> genres
-    // ) {
-    //     final var castMemberIDs = mapTo(castMembers, CastMemberID::from);
-    //     final var categoriesIDs = mapTo(categories, CategoryID::from);
-    //     final var genresIDs = mapTo(genres, GenreID::from);
+    @Override
+    public Pagination<VideoListResponse> list(
+        final String search,
+        final int page,
+        final int perPage,
+        final String sort,
+        final String direction,
+        final Set<String> castMembers,
+        final Set<String> categories,
+        final Set<String> genres
+    ) {
+        final var castMemberIDs = mapTo(castMembers, CastMemberID::from);
+        final var categoriesIDs = mapTo(categories, CategoryID::from);
+        final var genresIDs = mapTo(genres, GenreID::from);
 
-    //     final var aQuery = new VideoSearchQuery(page, perPage, search, sort, direction, castMemberIDs, categoriesIDs, genresIDs);
+        final var aQuery = new VideoSearchQuery(page, perPage, search, sort, direction, castMemberIDs, categoriesIDs, genresIDs);
 
-    //     return VideoApiPresenter.present(this.listVideosUseCase.execute(aQuery));
-    // }
+        return VideoApiPresenter.present(this.listVideosUseCase.execute(aQuery));
+    }
 
     // @Override
     // public ResponseEntity<byte[]> getMediaByType(final String id, final String type) {
