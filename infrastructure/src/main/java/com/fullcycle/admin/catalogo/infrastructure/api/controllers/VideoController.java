@@ -158,7 +158,10 @@ public class VideoController implements VideoAPI {
             .body(VideoApiPresenter.present(output));
     }
 
-
+    @Override
+    public void deleteById(final String id) {
+        this.deleteVideoUseCase.execute(id);
+    }
     
     // @Override
     // public Pagination<VideoListResponse> list(
@@ -178,19 +181,6 @@ public class VideoController implements VideoAPI {
     //     final var aQuery = new VideoSearchQuery(page, perPage, search, sort, direction, castMemberIDs, categoriesIDs, genresIDs);
 
     //     return VideoApiPresenter.present(this.listVideosUseCase.execute(aQuery));
-    // }
-
-    
-
-    
-
-    
-
-    
-
-    // @Override
-    // public void deleteById(final String id) {
-    //     this.deleteVideoUseCase.execute(id);
     // }
 
     // @Override

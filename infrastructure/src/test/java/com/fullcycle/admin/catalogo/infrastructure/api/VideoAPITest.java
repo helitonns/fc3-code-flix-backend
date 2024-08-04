@@ -469,6 +469,24 @@ public class VideoAPITest {
                 verify(updateVideoUseCase).execute(any());
         }
         
+        @Test
+        public void givenAValidId_whenCallsDeleteById_shouldDeleteIt() throws Exception {
+                // given
+                final var expectedId = VideoID.unique();
+
+                doNothing().when(deleteVideoUseCase).execute(any());
+
+                // when
+                final var aRequest = delete("/videos/{id}", expectedId.getValue()).with(ApiTest.GENRES_JWT);
+
+                final var response = this.mvc.perform(aRequest);
+
+                // then
+                response.andExpect(status().isNoContent());
+
+                verify(deleteVideoUseCase).execute(eq(expectedId.getValue()));
+        }
+
         // @Test
         // public void givenAnInvalidCommand_whenCallsCreateFull_shouldReturnError() throws Exception {
         //         // given
@@ -561,24 +579,7 @@ public class VideoAPITest {
 
         
 
-        // @Test
-        // public void givenAValidId_whenCallsDeleteById_shouldDeleteIt() throws Exception {
-        //         // given
-        //         final var expectedId = VideoID.unique();
-
-        //         doNothing().when(deleteVideoUseCase).execute(any());
-
-        //         // when
-        //         final var aRequest = delete("/videos/{id}", expectedId.getValue())
-        //                         .with(ApiTest.GENRES_JWT);
-
-        //         final var response = this.mvc.perform(aRequest);
-
-        //         // then
-        //         response.andExpect(status().isNoContent());
-
-        //         verify(deleteVideoUseCase).execute(eq(expectedId.getValue()));
-        // }
+        
 
         // @Test
         // public void givenValidParams_whenCallsListVideos_shouldReturnPagination() throws Exception {

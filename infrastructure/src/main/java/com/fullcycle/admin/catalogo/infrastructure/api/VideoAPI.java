@@ -78,6 +78,15 @@ public interface VideoAPI {
         ResponseEntity<?> update(@PathVariable(name = "id") String id, @RequestBody UpdateVideoRequest payload);
         //______________________________________________________________________________________________________________
         
+        @DeleteMapping(value = "{id}")
+        @ResponseStatus(HttpStatus.NO_CONTENT)
+        @Operation(summary = "Delete a video by it's identifier")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "204", description = "Video deleted"),
+                @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+        })
+        void deleteById(@PathVariable(name = "id") String id);
+
         // @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
         // @Operation(summary = "List all videos paginated")
         // @ApiResponses(
@@ -101,13 +110,7 @@ public interface VideoAPI {
 
         
 
-        // @DeleteMapping(value = "{id}")
-        // @ResponseStatus(HttpStatus.NO_CONTENT)
-        // @Operation(summary = "Delete a video by it's identifier")
-        // @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Video deleted"),
-        //                 @ApiResponse(responseCode = "500",
-        //                                 description = "An internal server error was thrown"),})
-        // void deleteById(@PathVariable(name = "id") String id);
+        
 
         // @GetMapping(value = "{id}/medias/{type}")
         // @Operation(summary = "Get a video media by it's type")
