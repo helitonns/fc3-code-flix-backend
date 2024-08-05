@@ -183,17 +183,16 @@ public class VideoController implements VideoAPI {
         return VideoApiPresenter.present(this.listVideosUseCase.execute(aQuery));
     }
 
-    // @Override
-    // public ResponseEntity<byte[]> getMediaByType(final String id, final String type) {
-    //     final var aMedia =
-    //             this.getMediaUseCase.execute(GetMediaCommand.with(id, type));
+    @Override
+    public ResponseEntity<byte[]> getMediaByType(final String id, final String type) {
+        final var aMedia = this.getMediaUseCase.execute(GetMediaCommand.with(id, type));
 
-    //     return ResponseEntity.ok()
-    //             .contentType(MediaType.valueOf(aMedia.contentType()))
-    //             .contentLength(aMedia.content().length)
-    //             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(aMedia.name()))
-    //             .body(aMedia.content());
-    // }
+        return ResponseEntity.ok()
+            .contentType(MediaType.valueOf(aMedia.contentType()))
+            .contentLength(aMedia.content().length)
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(aMedia.name()))
+            .body(aMedia.content());
+    }
 
     // @Override
     // public ResponseEntity<?> uploadMediaByType(final String id, final String type, final MultipartFile media) {

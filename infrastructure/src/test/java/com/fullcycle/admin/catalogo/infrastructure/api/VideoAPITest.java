@@ -604,6 +604,61 @@ public class VideoAPITest {
                 Assertions.assertTrue(actualQuery.genres().isEmpty());
         }
 
+        @Test
+        public void givenAValidVideoIdAndFileType_whenCallsGetMediaById_shouldReturnContent() throws Exception {
+                // given
+                final var expectedId = VideoID.unique();
+
+                final var expectedMediaType = VideoMediaType.VIDEO;
+                final var expectedResource = Fixture.Videos.resource(expectedMediaType);
+
+                final var expectedMedia = new MediaOutput(expectedResource.content(), expectedResource.contentType(), expectedResource.name());
+
+                when(getMediaUseCase.execute(any())).thenReturn(expectedMedia);
+
+                // when
+                final var aRequest = get("/videos/{id}/medias/{type}", expectedId.getValue(), expectedMediaType.name()).with(ApiTest.GENRES_JWT);
+
+                final var response = this.mvc.perform(aRequest);
+
+                // then
+                response.andExpect(status().isOk())
+                        .andExpect(header().string(CONTENT_TYPE, expectedMedia.contentType()))
+                        .andExpect(header().string(CONTENT_LENGTH, String.valueOf(expectedMedia.content().length)))
+                        .andExpect(header().string(CONTENT_DISPOSITION, "attachment; filename=%s".formatted(expectedMedia.name())))
+                        .andExpect(content().bytes(expectedMedia.content()));
+
+                final var captor = ArgumentCaptor.forClass(GetMediaCommand.class);
+
+                verify(this.getMediaUseCase).execute(captor.capture());
+
+                final var actualCmd = captor.getValue();
+                Assertions.assertEquals(expectedId.getValue(), actualCmd.videoId());
+                Assertions.assertEquals(expectedMediaType.name(), actualCmd.mediaType());
+        }
+
+        // @Test
+        // public void givenAnInvalidId_whenCallsGetById_shouldReturnNotFound() throws Exception {
+        //         // given
+        //         final var expectedId = VideoID.unique();
+        //         final var expectedErrorMessage = "Video with ID %s was not found".formatted(expectedId.getValue());
+
+        //         when(getVideoByIdUseCase.execute(any()))
+        //                 .thenThrow(NotFoundException.with(Video.class, expectedId));
+
+        //         // when
+        //         final var aRequest = get("/videos/{id}", expectedId).with(ApiTest.GENRES_JWT)
+        //                 .accept(MediaType.APPLICATION_JSON);
+
+        //         final var response = this.mvc.perform(aRequest);
+
+        //         // then
+        //         response
+        //                 .andExpect(status().isNotFound())
+        //                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+        //                 .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+        // }
+
         // @Test
         // public void givenAnInvalidCommand_whenCallsCreateFull_shouldReturnError() throws Exception {
         //         // given
@@ -669,70 +724,11 @@ public class VideoAPITest {
 
         
 
-        // @Test
-        // public void givenAnInvalidId_whenCallsGetById_shouldReturnNotFound() throws Exception {
-        //         // given
-        //         final var expectedId = VideoID.unique();
-        //         final var expectedErrorMessage =
-        //                         "Video with ID %s was not found".formatted(expectedId.getValue());
-
-        //         when(getVideoByIdUseCase.execute(any()))
-        //                         .thenThrow(NotFoundException.with(Video.class, expectedId));
-
-        //         // when
-        //         final var aRequest = get("/videos/{id}", expectedId).with(ApiTest.GENRES_JWT)
-        //                         .accept(MediaType.APPLICATION_JSON);
-
-        //         final var response = this.mvc.perform(aRequest);
-
-        //         // then
-        //         response.andExpect(status().isNotFound())
-        //                         .andExpect(header().string("Content-Type",
-        //                                         MediaType.APPLICATION_JSON_VALUE))
-        //                         .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
-        // }
+        
 
         
 
-        // @Test
-        // public void givenAValidVideoIdAndFileType_whenCallsGetMediaById_shouldReturnContent()
-        //                 throws Exception {
-        //         // given
-        //         final var expectedId = VideoID.unique();
-
-        //         final var expectedMediaType = VideoMediaType.VIDEO;
-        //         final var expectedResource = Fixture.Videos.resource(expectedMediaType);
-
-        //         final var expectedMedia = new MediaOutput(expectedResource.content(),
-        //                         expectedResource.contentType(), expectedResource.name());
-
-        //         when(getMediaUseCase.execute(any())).thenReturn(expectedMedia);
-
-        //         // when
-        //         final var aRequest = get("/videos/{id}/medias/{type}", expectedId.getValue(),
-        //                         expectedMediaType.name()).with(ApiTest.GENRES_JWT);
-
-        //         final var response = this.mvc.perform(aRequest);
-
-        //         // then
-        //         response.andExpect(status().isOk())
-        //                         .andExpect(header().string(CONTENT_TYPE,
-        //                                         expectedMedia.contentType()))
-        //                         .andExpect(header().string(CONTENT_LENGTH,
-        //                                         String.valueOf(expectedMedia.content().length)))
-        //                         .andExpect(header().string(CONTENT_DISPOSITION,
-        //                                         "attachment; filename=%s"
-        //                                                         .formatted(expectedMedia.name())))
-        //                         .andExpect(content().bytes(expectedMedia.content()));
-
-        //         final var captor = ArgumentCaptor.forClass(GetMediaCommand.class);
-
-        //         verify(this.getMediaUseCase).execute(captor.capture());
-
-        //         final var actualCmd = captor.getValue();
-        //         Assertions.assertEquals(expectedId.getValue(), actualCmd.videoId());
-        //         Assertions.assertEquals(expectedMediaType.name(), actualCmd.mediaType());
-        // }
+        
 
         // @Test
         // public void givenAValidVideoIdAndFile_whenCallsUploadMedia_shouldStoreIt()
