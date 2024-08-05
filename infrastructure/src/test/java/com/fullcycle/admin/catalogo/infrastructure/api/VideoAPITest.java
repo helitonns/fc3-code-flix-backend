@@ -705,92 +705,84 @@ public class VideoAPITest {
                         .andExpect(jsonPath("$.message", equalTo("Invalid INVALID for VideoMediaType")));
         }
 
-        // @Test
-        // public void givenAnInvalidId_whenCallsGetById_shouldReturnNotFound() throws Exception {
-        //         // given
-        //         final var expectedId = VideoID.unique();
-        //         final var expectedErrorMessage = "Video with ID %s was not found".formatted(expectedId.getValue());
+        @Test
+        public void givenAnInvalidCommand_whenCallsCreateFull_shouldReturnError() throws Exception {
+                // given
+                final var expectedErrorMessage = "title is required";
 
-        //         when(getVideoByIdUseCase.execute(any()))
-        //                 .thenThrow(NotFoundException.with(Video.class, expectedId));
+                when(createVideoUseCase.execute(any())).thenThrow(NotificationException.with(new Error(expectedErrorMessage)));
 
-        //         // when
-        //         final var aRequest = get("/videos/{id}", expectedId).with(ApiTest.GENRES_JWT)
-        //                 .accept(MediaType.APPLICATION_JSON);
+                // when
+                final var aRequest = multipart("/videos").with(ApiTest.GENRES_JWT)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.MULTIPART_FORM_DATA);
 
-        //         final var response = this.mvc.perform(aRequest);
+                final var response = this.mvc.perform(aRequest);
 
-        //         // then
-        //         response
-        //                 .andExpect(status().isNotFound())
-        //                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
-        //                 .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
-        // }
+                // then
+                response.andExpect(status().isUnprocessableEntity())
+                        .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+        }
 
-        // @Test
-        // public void givenAnInvalidCommand_whenCallsCreateFull_shouldReturnError() throws Exception {
-        //         // given
-        //         final var expectedErrorMessage = "title is required";
+        @Test
+        public void givenAnInvalidId_whenCallsGetById_shouldReturnNotFound() throws Exception {
+                // given
+                final var expectedId = VideoID.unique();
+                final var expectedErrorMessage = "Video with ID %s was not found".formatted(expectedId.getValue());
 
-        //         when(createVideoUseCase.execute(any())).thenThrow(
-        //                         NotificationException.with(new Error(expectedErrorMessage)));
+                when(getVideoByIdUseCase.execute(any()))
+                        .thenThrow(NotFoundException.with(Video.class, expectedId));
 
-        //         // when
-        //         final var aRequest = multipart("/videos").with(ApiTest.GENRES_JWT)
-        //                         .accept(MediaType.APPLICATION_JSON)
-        //                         .contentType(MediaType.MULTIPART_FORM_DATA);
+                // when
+                final var aRequest = get("/videos/{id}", expectedId).with(ApiTest.GENRES_JWT)
+                        .accept(MediaType.APPLICATION_JSON);
 
-        //         final var response = this.mvc.perform(aRequest);
+                final var response = this.mvc.perform(aRequest);
 
-        //         // then
-        //         response.andExpect(status().isUnprocessableEntity())
-        //                         .andExpect(header().string("Content-Type",
-        //                                         MediaType.APPLICATION_JSON_VALUE))
-        //                         .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
-        // }
+                // then
+                response
+                        .andExpect(status().isNotFound())
+                        .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+        }
 
-        
-        // @Test
-        // public void givenAnEmptyBody_whenCallsCreatePartial_shouldReturnError() throws Exception {
-        //         // when
-        //         final var aRequest = post("/videos").with(ApiTest.GENRES_JWT)
-        //                         .accept(MediaType.APPLICATION_JSON)
-        //                         .contentType(MediaType.APPLICATION_JSON);
+        @Test
+        public void givenAnEmptyBody_whenCallsCreatePartial_shouldReturnError() throws Exception {
+                // when
+                final var aRequest = post("/videos").with(ApiTest.GENRES_JWT)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON);
 
-        //         final var response = this.mvc.perform(aRequest);
+                final var response = this.mvc.perform(aRequest);
 
-        //         // then
-        //         response.andExpect(status().isBadRequest());
-        // }
+                // then
+                response.andExpect(status().isBadRequest());
+        }
 
-        // @Test
-        // public void givenAnInvalidCommand_whenCallsCreatePartial_shouldReturnError()
-        //                 throws Exception {
-        //         // given
-        //         final var expectedErrorMessage = "title is required";
+        @Test
+        public void givenAnInvalidCommand_whenCallsCreatePartial_shouldReturnError()
+                        throws Exception {
+                // given
+                final var expectedErrorMessage = "title is required";
 
-        //         when(createVideoUseCase.execute(any())).thenThrow(
-        //                         NotificationException.with(new Error(expectedErrorMessage)));
+                when(createVideoUseCase.execute(any())).thenThrow(NotificationException.with(new Error(expectedErrorMessage)));
 
-        //         // when
-        //         final var aRequest = post("/videos").with(ApiTest.GENRES_JWT)
-        //                         .accept(MediaType.APPLICATION_JSON)
-        //                         .contentType(MediaType.APPLICATION_JSON).content("""
-        //                                         {
-        //                                         "title": "Olá Mundo!"
-        //                                         }
-        //                                         """);
+                // when
+                final var aRequest = post("/videos").with(ApiTest.GENRES_JWT)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).content("""
+                                {
+                                "title": "Olá Mundo!"
+                                }
+                        """);
 
-        //         final var response = this.mvc.perform(aRequest);
+                final var response = this.mvc.perform(aRequest);
 
-        //         // then
-        //         response.andExpect(status().isUnprocessableEntity())
-        //                         .andExpect(header().string("Content-Type",
-        //                                         MediaType.APPLICATION_JSON_VALUE))
-        //                         .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
-        // }
-
-
-        
+                // then
+                response.andExpect(status().isUnprocessableEntity())
+                        .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+        }
 
 }
