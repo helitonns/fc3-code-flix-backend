@@ -194,20 +194,19 @@ public class VideoController implements VideoAPI {
             .body(aMedia.content());
     }
 
-    // @Override
-    // public ResponseEntity<?> uploadMediaByType(final String id, final String type, final MultipartFile media) {
-    //     final var aType = VideoMediaType.of(type)
-    //             .orElseThrow(() -> NotificationException.with(new Error("Invalid %s for VideoMediaType".formatted(type))));
+    @Override
+    public ResponseEntity<?> uploadMediaByType(final String id, final String type, final MultipartFile media) {
+        final var aType = VideoMediaType.of(type)
+            .orElseThrow(() -> NotificationException.with(new Error("Invalid %s for VideoMediaType".formatted(type))));
 
-    //     final var aCmd =
-    //             UploadMediaCommand.with(id, VideoResource.with(aType, resourceOf(media)));
+        final var aCmd = UploadMediaCommand.with(id, VideoResource.with(aType, resourceOf(media)));
 
-    //     final var output = this.uploadMediaUseCase.execute(aCmd);
+        final var output = this.uploadMediaUseCase.execute(aCmd);
 
-    //     return ResponseEntity
-    //             .created(URI.create("/videos/%s/medias/%s".formatted(id, type)))
-    //             .body(VideoApiPresenter.present(output));
-    // }
+        return ResponseEntity
+            .created(URI.create("/videos/%s/medias/%s".formatted(id, type)))
+            .body(VideoApiPresenter.present(output));
+    }
 
     private Resource resourceOf(final MultipartFile part) {
         if (part == null) {
