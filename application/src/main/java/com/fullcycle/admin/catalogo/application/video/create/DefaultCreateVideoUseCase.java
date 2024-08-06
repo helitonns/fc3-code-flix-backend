@@ -151,8 +151,8 @@ public class DefaultCreateVideoUseCase extends CreateVideoUseCase {
             missingIds.removeAll(retrievedIds);
 
             final var missingIdsMessage = missingIds.stream()
-                    .map(Identifier::getValue)
-                    .collect(Collectors.joining(", "));
+                .map(Identifier::getValue)
+                .collect(Collectors.joining(", "));
 
             notification.append(new Error("Some %s could not be found: %s".formatted(aggregate, missingIdsMessage)));
         }
@@ -162,7 +162,7 @@ public class DefaultCreateVideoUseCase extends CreateVideoUseCase {
 
     private <T> Set<T> toIdentifier(final Set<String> ids, final Function<String, T> mapper) {
         return ids.stream()
-                .map(mapper)
-                .collect(Collectors.toSet());
+            .map(mapper)
+            .collect(Collectors.toSet());
     }
 }
