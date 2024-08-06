@@ -36,11 +36,11 @@ public class VideoUseCaseConfig {
     private final VideoGateway videoGateway;
 
     public VideoUseCaseConfig(
-            final CategoryGateway categoryGateway,
-            final CastMemberGateway castMemberGateway,
-            final GenreGateway genreGateway,
-            final MediaResourceGateway mediaResourceGateway,
-            final VideoGateway videoGateway
+        final CategoryGateway categoryGateway,
+        final CastMemberGateway castMemberGateway,
+        final GenreGateway genreGateway,
+        final MediaResourceGateway mediaResourceGateway,
+        final VideoGateway videoGateway
     ) {
         this.categoryGateway = Objects.requireNonNull(categoryGateway);
         this.castMemberGateway = Objects.requireNonNull(castMemberGateway);
@@ -51,12 +51,24 @@ public class VideoUseCaseConfig {
 
     @Bean
     public CreateVideoUseCase createVideoUseCase() {
-        return new DefaultCreateVideoUseCase(categoryGateway, castMemberGateway, genreGateway, mediaResourceGateway, videoGateway);
+        return new DefaultCreateVideoUseCase(
+            categoryGateway, 
+            castMemberGateway, 
+            genreGateway, 
+            mediaResourceGateway, 
+            videoGateway
+    );
     }
 
     @Bean
     public UpdateVideoUseCase updateVideoUseCase() {
-        return new DefaultUpdateVideoUseCase(videoGateway, categoryGateway, castMemberGateway, genreGateway, mediaResourceGateway);
+        return new DefaultUpdateVideoUseCase(
+            videoGateway, 
+            categoryGateway, 
+            castMemberGateway, 
+            genreGateway, 
+            mediaResourceGateway
+        );
     }
 
     @Bean
